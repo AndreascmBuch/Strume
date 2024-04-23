@@ -31,13 +31,13 @@ fun HomeScreen(username: String) {
         var showDialog by remember { mutableStateOf(false) }
         var textInput by remember { mutableStateOf("") }
 
-        // Display the list of tasks
+        // Listen med tasks
         LazyColumn {
             items(tasks) { task ->
                 Text(text = task, color = Color.White, modifier = Modifier.padding(8.dp))
             }
         }
-
+// knap til tilføjelse
         Button(
             onClick = { showDialog = true },
             colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
@@ -45,7 +45,7 @@ fun HomeScreen(username: String) {
             Text(text = "+", color = Color.White)
         }
 
-        // Dialog for adding a new task
+        // Dialog til at tilføje tasks
         if (showDialog) {
             AlertDialog(
                 onDismissRequest = {
