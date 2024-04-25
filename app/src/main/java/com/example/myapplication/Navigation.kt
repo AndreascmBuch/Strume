@@ -15,7 +15,10 @@ fun Navigation() {
         }
         composable("Homepage/{username}") { backStackEntry ->
             val username = backStackEntry.arguments?.getString("username") ?: ""
-            HomeScreen(username = username)
+            HomeScreen(username = username, navController)
+        }
+        composable("Habits") {
+            Habits()
         }
     }
 }
