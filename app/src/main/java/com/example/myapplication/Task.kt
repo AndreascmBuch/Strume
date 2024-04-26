@@ -1,15 +1,7 @@
 package com.example.myapplication
 
-data class Task(
-    val id: Int,
-    val title: String,
-    val details: String,
-    val dueDate: Long,
-    val priority: Priority
-)
+data class Task(val id: Int, val title: String, val priority: Priority)
+enum class Priority { LOW, MEDIUM, HIGH }
+data class Habits(val title:String)
 
-enum class Priority {
-    LOW,
-    MEDIUM,
-    HIGH
-}
+

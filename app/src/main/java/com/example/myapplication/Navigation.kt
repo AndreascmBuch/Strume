@@ -18,7 +18,8 @@ fun Navigation() {
             HomeScreen(username = username, navController)
         }
         composable("Habits") {
-            Habits()
+        HabitsScreen(MyViewModel())
+
         }
     }
 }
