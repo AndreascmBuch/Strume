@@ -102,7 +102,7 @@ fun HomeScreen(username: String,navController: NavController) {
                     Text(text = "Home")
                 }
                 Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = { /* Do something */ }) {
+                Button(onClick = {navController.navigate("Calendar")}) {
                     Text(text = "Calendar")
                 }
                 Spacer(modifier = Modifier.width(4.dp))

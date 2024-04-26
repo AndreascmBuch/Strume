@@ -20,5 +20,8 @@ fun Navigation() {
         composable("Habits") {
             Habits()
         }
+        composable("Calendar") {
+            Calendar()
+        }
     }
 }
