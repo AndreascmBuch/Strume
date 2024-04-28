@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Splash Screen Theme -->
+    <style name="Theme.MySplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splashBlue</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/strume_logo_adaptive_fore</item>
+        <item name="postSplashScreenTheme">@style/Theme.MyApplication</item>
+    </style>
 
     <style name="Theme.MyApplication" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>

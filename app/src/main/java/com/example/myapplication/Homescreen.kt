@@ -103,5 +103,36 @@ fun HomeScreen(username: String, navController: NavController) {
                 }
             )
         }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color(0xFF4E4853))
+                .padding(start = 5.dp, end = 5.dp, top = 50.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Spacer(modifier = Modifier.width(4.dp))
+                Button(onClick = { /* Do something */ }) {
+                    Text(text = "Home")
+                }
+                Spacer(modifier = Modifier.width(4.dp))
+                Button(onClick = {navController.navigate("Calendar")}) {
+                    Text(text = "Calendar")
+                }
+                Spacer(modifier = Modifier.width(4.dp))
+                Button(onClick = {navController.navigate("Habits")}) {
+                    Text(text = "Habits")
+                }
+                Spacer(modifier = Modifier.width(4.dp))
+                Button(onClick = { /* Do something */ }) {
+                    Text(text = "List")
+                }
+            }
+        }
     }
 }

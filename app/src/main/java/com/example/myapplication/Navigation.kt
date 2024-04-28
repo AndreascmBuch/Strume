@@ -21,5 +21,8 @@ fun Navigation() {
         HabitsScreen(MyViewModel())
 
         }
+        composable("Calendar") {
+            Calendar()
+        }
     }
 }
