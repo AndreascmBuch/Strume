@@ -23,6 +23,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
+
 @Composable
 fun Welcome(navController: NavController) {
     val (username, setValue) = remember { mutableStateOf("") }
@@ -57,7 +58,7 @@ fun Welcome(navController: NavController) {
                 textStyle = TextStyle(color = Color.Black)
             )
             // Navigation and take username to homepage
-            Button(onClick = {navController.navigate("Homepage/${username}")},
+            Button(onClick = {navController.navigate("Homepage")},
                 modifier = Modifier.padding(vertical = 8.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xFF6597DD))
             ) {

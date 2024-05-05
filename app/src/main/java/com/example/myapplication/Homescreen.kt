@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,14 +18,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModelProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 
 // ViewModel til at styre opgaver og dialogtilstande
 
@@ -52,10 +53,9 @@ class HomeViewModel : ViewModel() {
 // Hovedskærmskomponenten
 
 @Composable
-fun HomeScreen(username: String, navController: NavController) {
+@Preview
+fun HomeScreen() {
     val viewModel: HomeViewModel = viewModel()
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -64,7 +64,7 @@ fun HomeScreen(username: String, navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Text(text = "Hello $username", color = Color.White)
+        Text(text = "Hello ", color = Color.White)
         Text(text = "Here are your tasks for the day", color = Color.White)
 
         LazyColumn {
@@ -72,14 +72,6 @@ fun HomeScreen(username: String, navController: NavController) {
                 Text(text = task, color = Color.White, modifier = Modifier.padding(8.dp))
             }
         }
-
-        Button(
-            onClick = { viewModel.showAddTaskDialog() },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
-        ) {
-            Text(text = "+", color = Color.White)
-        }
-
         if (viewModel.showDialog) {
             AlertDialog(
                 onDismissRequest = { viewModel.hideAddTaskDialog() },
@@ -103,66 +95,51 @@ fun HomeScreen(username: String, navController: NavController) {
                 }
             )
         }
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color(0xFF4E4853))
-                .padding(start = 5.dp, end = 5.dp, top = 50.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom
+    }
+    Column(modifier = Modifier
+        .padding(start = 165.dp, end = 16.dp, top = 750.dp),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = { /* Do something */ }) {
-                    Text(text = "Home")
-                }
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = {navController.navigate("Calendar")}) {
-                    Text(text = "Calendar")
-                }
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = {navController.navigate("Habits")}) {
-                    Text(text = "Habits")
-                }
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = { /* Do something */ }) {
-                    Text(text = "List")
-                }
-            }
+        Button(
+            onClick = { viewModel.showAddTaskDialog() },
+            colors = ButtonDefaults.buttonColors(Color(0xFF6597DD))
+        ) {
+            Text(text = "+", color = Color.White)
         }
-        Column(
+    }
+
+}
+
+@Composable
+fun Navbar() {
+    val navController = rememberNavController()
+    Column(modifier = Modifier
+        .padding(start = 1.dp, end = 1.dp, top = 800.dp),
+    verticalArrangement = Arrangement.Bottom,
+    horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
             modifier = Modifier
+                .background(color = Color.Black)
                 .fillMaxSize()
-                .background(color = Color(0xFF4E4853))
-                .padding(start = 5.dp, end = 5.dp, top = 50.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom
+                .fillMaxHeight()
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = {}) {
-                    Text(text = "Home")
-                }
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = { }) {
-                    Text(text = "Calendar")
-                }
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = {navController.navigate("Habits")}) {
-                    Text(text = "Habits")
-                }
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = {}) {
-                    Text(text = "List")
-                }
+            Spacer(modifier = Modifier.width(4.dp))
+            Button(onClick = { /* Do something */ }) {
+                Text(text = "Home")
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(onClick = { /* Do something */ }) {
+                Text(text = "Calendar")
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(onClick = { /* Do something */ }) {
+                Text(text = "Habits")
+            }
+            Spacer(modifier = Modifier.width(9.dp))
+            Button(onClick = { /* Do something */ }) {
+                Text(text = "List")
             }
         }
     }
