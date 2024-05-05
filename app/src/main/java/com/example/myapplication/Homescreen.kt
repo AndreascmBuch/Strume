@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 // ViewModel til at styre opgaver og dialogtilstande
@@ -53,8 +54,8 @@ class HomeViewModel : ViewModel() {
 // Hovedskærmskomponenten
 
 @Composable
-@Preview
-fun HomeScreen() {
+
+fun HomeScreen(username: String,navController: NavController) {
     val viewModel: HomeViewModel = viewModel()
     Column(
         modifier = Modifier
@@ -64,7 +65,7 @@ fun HomeScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Text(text = "Hello ", color = Color.White)
+        Text(text = "Hello $username", color = Color.White)
         Text(text = "Here are your tasks for the day", color = Color.White)
 
         LazyColumn {
