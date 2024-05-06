@@ -1,7 +1,6 @@
 package com.example.myapplication.navigation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -17,7 +16,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.Calendar
 import com.example.myapplication.HabitsScreen
-import com.example.myapplication.HomeScreen
+import com.example.myapplication.homescreen.HomeScreen
 import com.example.myapplication.MyViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color

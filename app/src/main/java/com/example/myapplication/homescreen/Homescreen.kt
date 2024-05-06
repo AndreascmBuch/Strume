@@ -1,14 +1,10 @@
-package com.example.myapplication
+package com.example.myapplication.homescreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
@@ -17,11 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
@@ -54,7 +45,7 @@ fun AddTaskDialog(viewModel: HomeViewModel) {
 }
 
 @Composable
-fun HomeScreen(username: String, navController: NavController) {
+fun HomeScreen() {
     val viewModel: HomeViewModel = viewModel()
 
     Column(
@@ -65,12 +56,16 @@ fun HomeScreen(username: String, navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Text(text = "Hello $username", color = Color.White)
+        Text(text = "Hello", color = Color.White)
         Text(text = "Here are your tasks for the day", color = Color.White)
 
         LazyColumn {
             items(viewModel.tasks) { task ->
-                Text(text = task, color = Color.White, modifier = Modifier.padding(8.dp))
+                Text(
+                    text = "Task: ${task.name}, Date: ${task.date}, Time: ${task.time}",
+                    color = Color.White,
+                    modifier = Modifier.padding(8.dp)
+                )
             }
         }
 
