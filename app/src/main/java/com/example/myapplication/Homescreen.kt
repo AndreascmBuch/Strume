@@ -26,66 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
 // Hovedskærmskomponenten
-
 @Composable
-
-fun HomeScreen() {
-    val viewModel: HomeViewModel = viewModel()
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color(0xFF4E4853))
-            .padding(start = 16.dp, end = 16.dp, top = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Text(text = "Hello ", color = Color.White)
-        Text(text = "Here are your tasks for the day", color = Color.White)
-
-        LazyColumn {
-            items(viewModel.tasks) { task ->
-                Text(text = task, color = Color.White, modifier = Modifier.padding(8.dp))
-            }
-        }
-        if (viewModel.showDialog) {
-            AlertDialog(
-                onDismissRequest = { viewModel.hideAddTaskDialog() },
-                title = { Text("Add New Task") },
-                text = {
-                    OutlinedTextField(
-                        value = viewModel.textInput,
-                        onValueChange = { viewModel.textInput = it },
-                        label = { Text("Task Details") }
-                    )
-                },
-                confirmButton = {
-                    Button(onClick = { viewModel.addTask() }) {
-                        Text("Add")
-                    }
-                },
-                dismissButton = {
-                    Button(onClick = { viewModel.hideAddTaskDialog() }) {
-                        Text("Cancel")
-                    }
-                }
-            )
-        }
-    }
-    Column(modifier = Modifier
-        .padding(start = 165.dp, end = 16.dp, top = 750.dp),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-        Button(
-            onClick = { viewModel.showAddTaskDialog() },
-            colors = ButtonDefaults.buttonColors(Color(0xFF6597DD))
-        ) {
-            Text(text = "+", color = Color.White)
-        }
-    }
-}
-
-
 fun AddTaskDialog(viewModel: HomeViewModel) {
     if (viewModel.showDialog) {
         AlertDialog(
