@@ -30,14 +30,14 @@ fun Navigation() {
     val navController = rememberNavController()
     Scaffold(
         bottomBar = {
-            NavigationBar(modifier = Modifier.background(Black)
+            NavigationBar(modifier = Modifier.background(Black),
+                containerColor = Black
             ) {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
                 listOfNavItems.forEach { navItem ->
                     NavigationBarItem(
                         modifier = Modifier.background(Black),
-
                         selected = currentDestination?.hierarchy?.any { it.route == navItem.route } == true,
                         onClick = {
                             navController.navigate(navItem.route) {
@@ -51,6 +51,7 @@ fun Navigation() {
                         icon = {
                             Icon(imageVector = navItem.icon,
                                 contentDescription = null,
+                                tint = Color(0xFF383838)
 
                             )
 

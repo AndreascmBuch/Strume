@@ -108,35 +108,4 @@ fun HomeScreen() {
     }
 }
 
-@Composable
-fun Navbar(navController: NavController) {
-    Column(modifier = Modifier
-        .padding(start = 1.dp, end = 1.dp, top = 800.dp),
-    verticalArrangement = Arrangement.Bottom,
-    horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row(
-            modifier = Modifier
-                .background(color = Color.Black)
-                .fillMaxSize()
-                .fillMaxHeight()
-        ) {
-            Spacer(modifier = Modifier.width(4.dp))
-            Button(onClick = { navController.navigate("Homepage/{username}") }) {
-                Text(text = "Home")
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = {navController.navigate("Calendar") }) {
-                Text(text = "Calendar")
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = {navController.navigate("Habits") }) {
-                Text(text = "Habits")
-            }
-            Spacer(modifier = Modifier.width(9.dp))
-            Button(onClick = { /* Do something */ }) {
-                Text(text = "List")
-            }
-        }
-    }
-}
+
