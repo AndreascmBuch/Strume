@@ -26,35 +26,38 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 
-// ViewModel til at styre opgaver og dialogtilstande
+// Hovedskærmskomponenten
 
-class HomeViewModel : ViewModel() {
-    val tasks = mutableStateListOf<String>()
-    var showDialog by mutableStateOf(false)
-    var textInput by mutableStateOf("")
-
-    fun addTask() {
-        if (textInput.isNotBlank()) {
-            tasks.add(textInput)
-            textInput = ""
-            showDialog = false
-        }
-    }
-
-    fun showAddTaskDialog() {
-        showDialog = true
-    }
-
-    fun hideAddTaskDialog() {
-        showDialog = false
+@Composable
+fun AddTaskDialog(viewModel: HomeViewModel) {
+    if (viewModel.showDialog) {
+        AlertDialog(
+            onDismissRequest = { viewModel.hideAddTaskDialog() },
+            title = { Text("Add New Task") },
+            text = {
+                OutlinedTextField(
+                    value = viewModel.textInput,
+                    onValueChange = { viewModel.textInput = it },
+                    label = { Text("Task Details") }
+                )
+            },
+            confirmButton = {
+                Button(onClick = { viewModel.addTask() }) {
+                    Text("Add")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { viewModel.hideAddTaskDialog() }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
-// Hovedskærmskomponenten
 
 @Composable
 fun HomeScreen(username: String, navController: NavController) {
     val viewModel: HomeViewModel = viewModel()
-
 
     Column(
         modifier = Modifier
@@ -80,90 +83,9 @@ fun HomeScreen(username: String, navController: NavController) {
             Text(text = "+", color = Color.White)
         }
 
-        if (viewModel.showDialog) {
-            AlertDialog(
-                onDismissRequest = { viewModel.hideAddTaskDialog() },
-                title = { Text("Add New Task") },
-                text = {
-                    OutlinedTextField(
-                        value = viewModel.textInput,
-                        onValueChange = { viewModel.textInput = it },
-                        label = { Text("Task Details") }
-                    )
-                },
-                confirmButton = {
-                    Button(onClick = { viewModel.addTask() }) {
-                        Text("Add")
-                    }
-                },
-                dismissButton = {
-                    Button(onClick = { viewModel.hideAddTaskDialog() }) {
-                        Text("Cancel")
-                    }
-                }
-            )
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color(0xFF4E4853))
-                .padding(start = 5.dp, end = 5.dp, top = 50.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = { /* Do something */ }) {
-                    Text(text = "Home")
-                }
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = {navController.navigate("Calendar")}) {
-                    Text(text = "Calendar")
-                }
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = {navController.navigate("Habits")}) {
-                    Text(text = "Habits")
-                }
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = { /* Do something */ }) {
-                    Text(text = "List")
-                }
-            }
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color(0xFF4E4853))
-                .padding(start = 5.dp, end = 5.dp, top = 50.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = {}) {
-                    Text(text = "Home")
-                }
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = { }) {
-                    Text(text = "Calendar")
-                }
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = {navController.navigate("Habits")}) {
-                    Text(text = "Habits")
-                }
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(onClick = {}) {
-                    Text(text = "List")
-                }
-            }
-        }
+        // Call the AddTaskDialog composable function
+        AddTaskDialog(viewModel)
+
+        // Other parts of your UI...
     }
 }
