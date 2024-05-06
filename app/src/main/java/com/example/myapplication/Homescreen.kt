@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,10 +22,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 
 // ViewModel til at styre opgaver og dialogtilstande
 
@@ -55,7 +52,7 @@ class HomeViewModel : ViewModel() {
 
 @Composable
 
-fun HomeScreen(username: String,navController: NavController) {
+fun HomeScreen() {
     val viewModel: HomeViewModel = viewModel()
     Column(
         modifier = Modifier
@@ -65,7 +62,7 @@ fun HomeScreen(username: String,navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Text(text = "Hello $username", color = Color.White)
+        Text(text = "Hello ", color = Color.White)
         Text(text = "Here are your tasks for the day", color = Color.White)
 
         LazyColumn {
@@ -109,12 +106,10 @@ fun HomeScreen(username: String,navController: NavController) {
             Text(text = "+", color = Color.White)
         }
     }
-
 }
 
 @Composable
-fun Navbar() {
-    val navController = rememberNavController()
+fun Navbar(navController: NavController) {
     Column(modifier = Modifier
         .padding(start = 1.dp, end = 1.dp, top = 800.dp),
     verticalArrangement = Arrangement.Bottom,
@@ -127,15 +122,15 @@ fun Navbar() {
                 .fillMaxHeight()
         ) {
             Spacer(modifier = Modifier.width(4.dp))
-            Button(onClick = { /* Do something */ }) {
+            Button(onClick = { navController.navigate("Homepage/{username}") }) {
                 Text(text = "Home")
             }
             Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = { /* Do something */ }) {
+            Button(onClick = {navController.navigate("Calendar") }) {
                 Text(text = "Calendar")
             }
             Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = { /* Do something */ }) {
+            Button(onClick = {navController.navigate("Habits") }) {
                 Text(text = "Habits")
             }
             Spacer(modifier = Modifier.width(9.dp))

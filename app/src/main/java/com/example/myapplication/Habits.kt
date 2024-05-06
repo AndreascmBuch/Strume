@@ -26,11 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 
 @Composable
 
-fun HabitsScreen(viewModel: MyViewModel) {
+fun HabitsScreen(viewModel: MyViewModel,navController: NavController) {
     var showDialog by remember { mutableStateOf(false) }
     var habitTitle by remember { mutableStateOf(TextFieldValue()) }
 
@@ -132,6 +133,6 @@ fun HabitsScreen(viewModel: MyViewModel) {
         }
     }
     }
-
+Navbar(navController)
 }
 

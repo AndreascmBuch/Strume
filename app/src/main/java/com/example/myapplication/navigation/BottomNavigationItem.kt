@@ -2,6 +2,7 @@ package com.example.myapplication.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
@@ -11,38 +12,32 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.ui.graphics.vector.ImageVector
 
-data class BottomNavigationItem(
+data class NavItem(
     val title: String,
-    val selectedIcon: ImageVector,
-    val unSelectedIcon: ImageVector,
-    val hasNews: Boolean,
-    val badgeCount: Int? = null
+    val icon: ImageVector,
+    val route: String
 )
 
-val items = listOf(
-    BottomNavigationItem(
-        title = "home",
-        selectedIcon = Icons.Filled.Home,
-        unSelectedIcon = Icons.Outlined.Home,
-        hasNews = false
+val listOfNavItems = listOf(
+    NavItem(
+        title="Home",
+        icon = Icons.Default.Home,
+        route = Screens.HomeScreen.name
+        ),
+    NavItem(
+        title="Calendar",
+        icon = Icons.Default.DateRange,
+        route = Screens.CalendarScreen.name
     ),
-    BottomNavigationItem(
-        title = "calendar",
-        selectedIcon = Icons.Filled.List,
-        unSelectedIcon = Icons.Outlined.List,
-        hasNews = false,
+    NavItem(
+        title="Habits",
+        icon = Icons.Default.Favorite,
+        route = Screens.HabitsScreen.name
     ),
-    BottomNavigationItem(
-        title = "habits",
-        selectedIcon = Icons.Filled.Favorite,
-        unSelectedIcon = Icons.Outlined.Favorite,
-        hasNews = false,
+    NavItem(
+        title="List",
+        icon = Icons.Default.List,
+        route = Screens.ListScreen.name
     ),
-    BottomNavigationItem(
-        title = "ist",
-        selectedIcon = Icons.Filled.CheckCircle,
-        unSelectedIcon = Icons.Outlined.CheckCircle,
-        hasNews = false,
-    )
 )
 

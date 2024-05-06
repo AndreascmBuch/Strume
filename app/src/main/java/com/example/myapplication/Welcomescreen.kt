@@ -58,7 +58,7 @@ fun Welcome(navController: NavController) {
                 textStyle = TextStyle(color = Color.Black)
             )
             // Navigation and take username to homepage
-            Button(onClick = {navController.navigate("Homepage/{username}")},
+            Button(onClick = {navController.navigate("Homepage/$username")},
                 modifier = Modifier.padding(vertical = 8.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xFF6597DD))
             ) {
