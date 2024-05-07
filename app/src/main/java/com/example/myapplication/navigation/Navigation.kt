@@ -1,7 +1,6 @@
 package com.example.myapplication.navigation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -23,49 +22,56 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.myapplication.welcomescreen.Welcome
 
 @Composable
 @Preview
 fun Navigation() {
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
     Scaffold(
         bottomBar = {
-            NavigationBar(modifier = Modifier.background(Black),
-                containerColor = Black
-            ) {
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentDestination = navBackStackEntry?.destination
-                listOfNavItems.forEach { navItem ->
-                    NavigationBarItem(
-                        modifier = Modifier.background(Black),
-                        selected = currentDestination?.hierarchy?.any { it.route == navItem.route } == true,
-                        onClick = {
-                            navController.navigate(navItem.route) {
-                                popUpTo(navController.graph.findStartDestination().id){
-                                    saveState= true
+            if (currentDestination?.route != "Welcome") {
+                NavigationBar(
+                    modifier = Modifier.background(Color.Black),
+                    containerColor = Color.Black
+                ) {
+                    listOfNavItems.forEach { navItem ->
+                        NavigationBarItem(
+                            modifier = Modifier.background(Color.Black),
+                            selected = currentDestination?.hierarchy?.any { it.route == navItem.route } == true,
+                            onClick = {
+                                navController.navigate(navItem.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = navItem.icon,
+                                    contentDescription = null,
+                                    tint = Color(0xFF383838)
+                                )
                             }
-                        },
-                        icon = {
-                            Icon(imageVector = navItem.icon,
-                                contentDescription = null,
-                                tint = Color(0xFF383838)
-
-                            )
-
-                        }
-                    )
+                        )
+                    }
                 }
             }
-        }) { paddingValues ->
+        }
+    ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = Screens.HomeScreen.name,
-            modifier = Modifier
-                .padding(paddingValues)
+            startDestination = "Welcome",
+            modifier = Modifier.padding(paddingValues)
         ) {
+            composable("Welcome") {
+                Welcome(navController)
+            }
             composable(Screens.HomeScreen.name) {
                 HomeScreen()
             }
@@ -73,14 +79,15 @@ fun Navigation() {
                 Calendar()
             }
             composable(Screens.HabitsScreen.name) {
-                HabitsScreen(MyViewModel(), navController)
+                HabitsScreen(MyViewModel())
             }
             composable(Screens.ListScreen.name) {
-
+                // Your list screen content
             }
         }
     }
 }
+
 
 
 
