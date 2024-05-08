@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.welcomescreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,6 +22,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.example.myapplication.R
+import com.example.myapplication.navigation.Screens
 
 
 @Composable
@@ -33,7 +36,7 @@ fun Welcome(navController: NavController) {
             .fillMaxSize()
             .background(color = Color(0xFF4E4853)),
         contentAlignment = Alignment.Center
-        
+
     ) {
 
         Column(
@@ -58,7 +61,18 @@ fun Welcome(navController: NavController) {
                 textStyle = TextStyle(color = Color.Black)
             )
             // Navigation and take username to homepage
-            Button(onClick = {navController.navigate("Homepage/$username")},
+            Button(
+                onClick = {
+                    if (username.isNotBlank()) {
+                        navController.navigate("${Screens.HomeScreen.name}") {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                },
                 modifier = Modifier.padding(vertical = 8.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xFF6597DD))
             ) {
@@ -67,4 +81,5 @@ fun Welcome(navController: NavController) {
         }
     }
 }
+
 
