@@ -3,8 +3,12 @@ package com.example.myapplication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
@@ -19,7 +23,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
-
+import androidx.navigation.NavController
+import com.example.myapplication.welcomescreen.Username
 
 // ViewModel til at styre opgaver og dialogtilstande
 
@@ -87,18 +92,7 @@ fun HomeScreen() {
                     }
                 }
             )
-        }
-    }
-    Column(modifier = Modifier
-        .padding(start = 165.dp, end = 16.dp, top = 750.dp),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-        Button(
-            onClick = { viewModel.showAddTaskDialog() },
-            colors = ButtonDefaults.buttonColors(Color(0xFF6597DD))
-        ) {
-            Text(text = "+", color = Color.White)
+
         }
     }
 }
