@@ -133,6 +133,5 @@ fun HabitsScreen(viewModel: MyViewModel,navController: NavController) {
         }
     }
     }
-Navbar(navController)
 }
 

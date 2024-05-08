@@ -1,5 +1,7 @@
 package com.example.myapplication.homescreen
 
+import android.app.TimePickerDialog
+import android.widget.TimePicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,23 +14,68 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import java.time.LocalDate
+import java.util.Calendar
 
 // Hovedskærmskomponenten
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTaskDialog(viewModel: HomeViewModel) {
+    val context = LocalContext.current
+
     if (viewModel.showDialog) {
+        val calendar = Calendar.getInstance()
+
+        // Launch DatePickerDialog
+        fun showDatePicker() {
+            // Instantiating the DatePickerDialog
+            val datePickerDialog = android.app.DatePickerDialog(
+                context,
+                { _, year, month, dayOfMonth ->
+                    viewModel.selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
+                    viewModel.showDatePickerDialog = false  // Set to false after date selection
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
+            // Display the dialog
+            datePickerDialog.show()
+        }
+
+        // Launch TimePickerDialog
+        fun showTimePicker() {
+            TimePickerDialog(
+                context,
+                { _: TimePicker, hourOfDay: Int, minute: Int ->
+                    viewModel.selectedTime = String.format("%02d:%02d", hourOfDay, minute)
+                },
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true
+            ).show()
+        }
+
         AlertDialog(
             onDismissRequest = { viewModel.hideAddTaskDialog() },
             title = { Text("Add New Task") },
             text = {
-                OutlinedTextField(
-                    value = viewModel.textInput,
-                    onValueChange = { viewModel.textInput = it },
-                    label = { Text("Task Details") }
-                )
+                Column {
+                    OutlinedTextField(
+                        value = viewModel.textInput,
+                        onValueChange = { viewModel.textInput = it },
+                        label = { Text("Task Details") }
+                    )
+                    Button(onClick = { showDatePicker() }) {
+                        Text("Select Date: ${viewModel.selectedDate}")
+                    }
+                    Button(onClick = { showTimePicker() }) {
+                        Text("Select Time: ${viewModel.selectedTime}")
+                    }
+                }
             },
             confirmButton = {
                 Button(onClick = { viewModel.addTask() }) {

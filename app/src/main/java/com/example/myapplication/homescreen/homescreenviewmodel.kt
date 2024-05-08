@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import java.time.LocalDate
 
 
 class HomeViewModel : ViewModel() {
@@ -15,21 +16,26 @@ class HomeViewModel : ViewModel() {
     val availableTimes = List(24 * 12) { i ->
         String.format("%02d:%02d", i / 12, (i % 12) * 5)
     }
+    var selectedDate by mutableStateOf(LocalDate.now())
+    var showDatePickerDialog by mutableStateOf(false)
+    var showTimePickerDialog by mutableStateOf(false)
 
     fun addTask(task: Task) {
         tasks.add(task)
     }
 
+
     fun addTask() {
         if (textInput.isNotBlank()) {
-            val task = com.example.myapplication.homescreen.Task(
-                textInput,
-                "2024-05-07",
-                selectedTime,
-                "default_icon"
-            ) // Change "2024-05-07" to the actual date value
+            val task = Task(
+                name = textInput,
+                date = selectedDate.toString(),
+                time = selectedTime,
+                icon = "default_icon"
+            )
             tasks.add(task)
             textInput = ""
+            selectedTime = availableTimes.first()  // Reset or set a default time if necessary
             showDialog = false
         }
     }
