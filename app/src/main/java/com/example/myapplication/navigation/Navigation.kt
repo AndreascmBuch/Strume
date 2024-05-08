@@ -23,15 +23,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.Calendar
-import com.example.myapplication.HabitsScreen
-import com.example.myapplication.HomeScreen
-import com.example.myapplication.MyViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.myapplication.HomeViewModel
+import com.example.myapplication.homescreen.AddTaskDialog
+import com.example.myapplication.homescreen.HomeScreen
+import com.example.myapplication.homescreen.HomeViewModel
 import com.example.myapplication.welcomescreen.Welcome
+
 
 @Composable
 fun Navigation() {
@@ -83,13 +83,14 @@ fun Navigation() {
                 Welcome(navController)
             }
             composable(Screens.HomeScreen.name) {
+                AddTaskDialog(viewModel)
                 HomeScreen()
             }
             composable(Screens.CalendarScreen.name) {
                 Calendar()
             }
             composable(Screens.HabitsScreen.name) {
-                HabitsScreen(MyViewModel())
+
             }
             composable(Screens.ListScreen.name) {
                 // Your list screen content

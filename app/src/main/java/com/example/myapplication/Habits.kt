@@ -31,7 +31,7 @@ import androidx.navigation.NavController
 
 @Composable
 
-fun HabitsScreen(viewModel: MyViewModel) {
+fun HabitsScreen() {
     var showDialog by remember { mutableStateOf(false) }
     var habitTitle by remember { mutableStateOf(TextFieldValue()) }
 
@@ -57,50 +57,11 @@ fun HabitsScreen(viewModel: MyViewModel) {
         ) {
             Text(text = "+", color = Color.White)
         }
-        LazyColumn {
-            items(viewModel.habitsList) { habit ->
-                Text(
-                    text = habit.title,
-                    color = Color.White,
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
-        }
+
 
         // Dialog to add a new habit
-        if (showDialog) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false },
-                title = { Text(text = "Add New Habit") },
-                text = {
-                    Column {
-                        TextField(
-                            value = habitTitle,
-                            onValueChange = { habitTitle = it },
-                            label = { Text("Habit Title") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            viewModel.addHabit(Habits(title = habitTitle.text))
-                            showDialog = false
-                        }
-                    ) {
-                        Text("Add")
-                    }
-                },
-                dismissButton = {
-                    Button(
-                        onClick = { showDialog = false }
-                    ) {
-                        Text("Cancel")
-                    }
-                }
-            )
+
         }
     }
-}
+
 

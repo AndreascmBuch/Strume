@@ -6,9 +6,3 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
-class MyViewModel : ViewModel() {
-    val habitsList = mutableStateListOf<Habits>()
-    fun addHabit(habit:Habits) {
-        habitsList.add(habit)
-    }
-}
