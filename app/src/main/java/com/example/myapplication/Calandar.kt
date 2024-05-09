@@ -21,15 +21,15 @@ fun Calendar() {
     ) {
         Text(
             text = "Plan your life",
-            fontSize = 24.dp,
+            fontSize = 24.sp,
             modifier = Modifier.padding(top = 8.dp, bottom = 8.dp))
         Text(
             text = "Add event forward in time",
-            fontSize = 18.dp,
+            fontSize = 18.sp,
             modifier = Modifier.padding(bottom = 24.dp))
         Text(
             text = "June 2024",
-            fontSize = 18.dp, modifier = Modifier
+            fontSize = 18.sp, modifier = Modifier
                 .align(Alignment.Start)
                 .padding(start = 16.dp, bottom = 32.dp))
         Row(
@@ -72,7 +72,7 @@ fun Calendar() {
                         ) {
                             Text(
                                 text = "$date",
-                                fontSize = 16.dp)
+                                fontSize = 16.sp)
                         }
                     } else {
                         Spacer(
