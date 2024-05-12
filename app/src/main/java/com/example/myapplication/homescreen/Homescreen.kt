@@ -134,22 +134,8 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
             }
             Log.d("HomeScreen", "LazyColumn recomposing with ${viewModel.tasks.size} tasks")
         }
-
-        Button(
-            onClick = { viewModel.showAddTaskDialog()
-                Log.d("HomeScreen", "Button clicked to show dialog")},
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
-        ) {
-            Text(text = "Her test", color = Color.White)
         }
 
         // Call the AddTaskDialog composable function
         AddTaskDialog(viewModel)
-
-        // Other parts of your UI...
-    }
-    LaunchedEffect(viewModel.tasks) {
-        Log.d("HomeScreen", "Tasks have changed. Size: ${viewModel.tasks.size}")
-    }
-
 }
