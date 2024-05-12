@@ -61,6 +61,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation("androidx.core:core-splashscreen:1.2.0-alpha01")
+    implementation(libs.androidx.media3.common)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

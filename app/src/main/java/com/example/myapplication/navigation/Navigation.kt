@@ -1,6 +1,7 @@
 package com.example.myapplication.navigation
 
 import Calendar
+import androidx.annotation.OptIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,19 +28,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.media3.common.util.Log
+import androidx.media3.common.util.UnstableApi
 import com.example.myapplication.homescreen.AddTaskDialog
 import com.example.myapplication.homescreen.HomeScreen
 import com.example.myapplication.homescreen.HomeViewModel
 import com.example.myapplication.welcomescreen.Welcome
 
 
+@OptIn(UnstableApi::class)
 @Composable
-fun Navigation() {
+fun Navigation(homeViewModel: HomeViewModel) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    val viewModel: HomeViewModel = viewModel()
+    val homeViewModel: HomeViewModel = viewModel()
 
     Scaffold(
         bottomBar = {
@@ -83,8 +87,8 @@ fun Navigation() {
                 Welcome(navController)
             }
             composable(Screens.HomeScreen.name) {
-                AddTaskDialog(viewModel)
-                HomeScreen()
+                AddTaskDialog(homeViewModel)
+                HomeScreen(homeViewModel)
             }
             composable(Screens.CalendarScreen.name) {
                 Calendar()
@@ -99,7 +103,8 @@ fun Navigation() {
 
     }
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(bottom = 50.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
@@ -117,7 +122,8 @@ fun Navigation() {
                     // Perform action based on the current destination
                     when (currentDestination?.route) {
                         Screens.HomeScreen.name -> {
-                            viewModel.showAddTaskDialog()
+                            Log.d("Navigation", "ViewModel instance from FAB: $homeViewModel")
+                            homeViewModel.showAddTaskDialog()
                         }
                         Screens.CalendarScreen.name -> {
                             // Action for Calendar screen

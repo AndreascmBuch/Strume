@@ -1,5 +1,6 @@
 package com.example.myapplication.homescreen
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -9,7 +10,7 @@ import java.time.LocalDate
 
 
 class HomeViewModel : ViewModel() {
-    val tasks = mutableStateListOf<Task>()
+    var tasks = mutableStateListOf<Task>()
     var showDialog by mutableStateOf(false)
     var textInput by mutableStateOf("")
     var selectedTime by mutableStateOf("")
@@ -20,23 +21,18 @@ class HomeViewModel : ViewModel() {
     var showDatePickerDialog by mutableStateOf(false)
     var showTimePickerDialog by mutableStateOf(false)
 
-    fun addTask(task: Task) {
-        tasks.add(task)
-    }
-
 
     fun addTask() {
         if (textInput.isNotBlank()) {
-            val task = Task(
-                name = textInput,
-                date = selectedDate.toString(),
-                time = selectedTime,
-                icon = "default_icon"
-            )
+            val task = Task(name = textInput, date = selectedDate.toString(), time = selectedTime, icon = "default_icon")
             tasks.add(task)
-            textInput = ""
-            selectedTime = availableTimes.first()  // Reset or set a default time if necessary
-            showDialog = false
+            Log.d("HomeViewModel", "Task added: $task, Total tasks now: ${tasks.size}")
+            textInput = ""  // Clear the input after adding
+            selectedTime = availableTimes.first()  // Reset time
+            showDialog = false  // Close dialog
+            Log.d("ViewModel", "Task added: ${task.name}, Date: ${task.date}, Time: ${task.time}")
+        } else {
+            Log.d("HomeViewModel", "No task input to add")
         }
     }
 
