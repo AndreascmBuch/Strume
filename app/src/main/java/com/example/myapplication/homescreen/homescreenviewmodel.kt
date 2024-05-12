@@ -7,6 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 
 class HomeViewModel : ViewModel() {
@@ -26,13 +29,25 @@ class HomeViewModel : ViewModel() {
         if (textInput.isNotBlank()) {
             val task = Task(name = textInput, date = selectedDate.toString(), time = selectedTime, icon = "default_icon")
             tasks.add(task)
+            // Sort the tasks list
+            tasks.sortWith(Comparator.comparing<Task, LocalDate> { LocalDate.parse(it.date) }
+                .thenComparing(Comparator.comparing<Task, LocalTime> { safeParseTime(it.time) }))
+            // Log the addition
             Log.d("HomeViewModel", "Task added: $task, Total tasks now: ${tasks.size}")
-            textInput = ""  // Clear the input after adding
+            // Reset inputs and close dialog
+            textInput = ""  // Clear the input
             selectedTime = availableTimes.first()  // Reset time
             showDialog = false  // Close dialog
-            Log.d("ViewModel", "Task added: ${task.name}, Date: ${task.date}, Time: ${task.time}")
         } else {
             Log.d("HomeViewModel", "No task input to add")
+        }
+    }
+
+    private fun safeParseTime(time: String): LocalTime {
+        return try {
+            LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"))
+        } catch (e: DateTimeParseException) {
+            LocalTime.MIN  // Default to the minimum time if parsing fails
         }
     }
 
