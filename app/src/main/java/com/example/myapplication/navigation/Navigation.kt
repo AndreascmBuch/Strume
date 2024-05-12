@@ -137,6 +137,7 @@ fun Navigation(homeViewModel: HomeViewModel) {
                     }
                 },
                 shape = RoundedCornerShape(30.dp),
+                containerColor = Color(0xFF00C2FF),
             ) {
                 Icon(fabIcon, contentDescription = "Fab")
             }
