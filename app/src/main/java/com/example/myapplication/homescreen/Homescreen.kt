@@ -19,7 +19,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
+
+fun getDayOfMonthSuffix(day: Int): String {
+    return when {
+        day in 11..13 -> "th"
+        day % 10 == 1 -> "st"
+        day % 10 == 2 -> "nd"
+        day % 10 == 3 -> "rd"
+        else -> "th"
+    }
+}
 
 // Hovedskærmskomponenten
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,20 +41,23 @@ fun AddTaskDialog(viewModel: HomeViewModel) {
     if (viewModel.showDialog) {
         val calendar = Calendar.getInstance()
 
+
         // Launch DatePickerDialog
         fun showDatePicker() {
-            // Instantiating the DatePickerDialog
             val datePickerDialog = android.app.DatePickerDialog(
                 context,
                 { _, year, month, dayOfMonth ->
-                    viewModel.selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
-                    viewModel.showDatePickerDialog = false  // Set to false after date selection
+                    val localDate = LocalDate.of(year, month + 1, dayOfMonth)
+                    viewModel.selectedDate = localDate // Store the LocalDate
+                    // Format and store the string representation
+                    viewModel.selectedDateString = localDate.format(DateTimeFormatter.ofPattern("EEEE, d'" + getDayOfMonthSuffix(dayOfMonth) + "' MMMM"))
+                    Log.d("DatePicker", "Selected Date String: ${viewModel.selectedDateString}") // Add this line
+                    viewModel.showDatePickerDialog = false // Close the date picker dialog
                 },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
+                viewModel.selectedDate.year,
+                viewModel.selectedDate.monthValue - 1,
+                viewModel.selectedDate.dayOfMonth
             )
-            // Display the dialog
             datePickerDialog.show()
         }
 
@@ -126,7 +140,13 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
             items(tasks) { task ->
                 Log.d("HomeScreen", "Displaying task: ${task.name}, ${task.date}, ${task.time}")
                 Text(
-                    text = "Task: ${task.name}, Date: ${task.date}, Time: ${task.time}",
+                    text = task.date,
+                    color = Color.White,  // Making the date stand out
+                    fontSize = MaterialTheme.typography.headlineMedium.fontSize,  // Larger text size for date
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+                Text(
+                    text = "Task: ${task.name}, Time: ${task.time}",
                     color = Color.White,
                     modifier = Modifier.padding(8.dp)
                 )

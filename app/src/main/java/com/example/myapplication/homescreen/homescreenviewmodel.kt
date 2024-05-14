@@ -21,16 +21,18 @@ class HomeViewModel : ViewModel() {
         String.format("%02d:%02d", i / 12, (i % 12) * 5)
     }
     var selectedDate by mutableStateOf(LocalDate.now())
+    var selectedDateString by mutableStateOf(LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE, d'th' MMMM")))
     var showDatePickerDialog by mutableStateOf(false)
     var showTimePickerDialog by mutableStateOf(false)
 
 
     fun addTask() {
         if (textInput.isNotBlank()) {
-            val task = Task(name = textInput, date = selectedDate.toString(), time = selectedTime, icon = "default_icon")
+            // Use formatted date string for task date
+            val task = Task(name = textInput, date = selectedDateString, time = selectedTime, icon = "default_icon")
             tasks.add(task)
-            // Sort the tasks list
-            tasks.sortWith(Comparator.comparing<Task, LocalDate> { LocalDate.parse(it.date) }
+            // Sorting tasks should now consider the LocalDate parsed from date string if necessary
+            tasks.sortWith(Comparator.comparing<Task, LocalDate> { LocalDate.parse(it.date, DateTimeFormatter.ofPattern("EEEE, d'th' MMMM")) }
                 .thenComparing(Comparator.comparing<Task, LocalTime> { safeParseTime(it.time) }))
             // Log the addition
             Log.d("HomeViewModel", "Task added: $task, Total tasks now: ${tasks.size}")
