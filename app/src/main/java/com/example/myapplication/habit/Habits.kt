@@ -13,11 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -26,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 
 enum class Frequency {
     DAILY,
@@ -37,41 +41,35 @@ data class Habit(
     val id: Int,
     val name: String,
     var frequency: Frequency,
-    val streak: Int
-)
+    private var _streak: Int
+) {
+    var streak: Int by mutableIntStateOf(_streak)
+        private set
 
-@Composable
-fun HabitsScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color(0xFF4E4853))
-            .padding(start = 16.dp, end = 16.dp, top = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Text(text = "Habits", color = Color.White)
-        Text(
-            text = "Keep up your good Habits for a healthy life",
-            color = Color.White
-        )
-        val itemsList = listOf(
-            Habit(1, "Exercise", Frequency.DAILY, 1),
-            Habit(2, "Healthy Eating", Frequency.EVERY_SECOND_DAY, 2),
-            Habit(3, "Adequate Sleep", Frequency.WEEKLY, 2),
-            Habit(4, "Meditation", Frequency.EVERY_SECOND_DAY, 3),
-            Habit(5, "Hydration", Frequency.DAILY, 4)
-        )
-
-        LazyColumn {
-            items(items = itemsList) { item ->
-                HabitItemRow(item = item)
-            }
-
-
-        }
+    fun incrementStreak() {
+        _streak++
+        streak = _streak
     }
 }
+
+class HabitsViewModel : ViewModel() {
+    val habits = mutableListOf<Habit>()
+
+    fun addHabit(name: String, frequency: Frequency, streak: Int) {
+        val habit = Habit(
+            id = habits.size + 1, // You can generate a unique ID here
+            name = name,
+            frequency = frequency,
+            _streak = streak
+        )
+        habits.add(habit)
+    }
+
+    // Other methods remain the same
+}
+
+
+
 @Composable
 fun DropDownMenu(
     frequencies: List<Frequency>,
@@ -107,13 +105,14 @@ fun DropDownMenu(
 
 
 @Composable
-fun HabitItemRow(item: Habit) {
+fun HabitItemRow(item: Habit, viewModel: HabitsViewModel) {
     Column(
         modifier = Modifier
             .padding(vertical = 8.dp)
             .clip(RoundedCornerShape(20.dp))
             .background(color = Color.Gray)
             .fillMaxWidth()
+            .clickable {(item.incrementStreak()) }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -137,15 +136,60 @@ fun HabitItemRow(item: Habit) {
                 Frequency.WEEKLY
             ),
             selectedFrequency = item.frequency,
-            onFrequencySelected = {
-                // Here, you can update the frequency of the habit
-                // You might want to update the habit in your ViewModel or repository
+            onFrequencySelected = { frequency ->
+                /*viewModel.updateHabitFrequency(item, frequency)*/
             }
         )
     }
 }
 
 
+@Composable
+fun HabitsScreen() {
+    val viewModel = remember { HabitsViewModel() } // Remember to use remember to retain state
+    val newHabitNameState = remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color(0xFF4E4853))
+            .padding(start = 16.dp, end = 16.dp, top = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ) {
+        Text(text = "Habits", color = Color.White)
+        Text(
+            text = "Keep up your good Habits for a healthy life",
+            color = Color.White
+        )
+        TextField(
+            value = newHabitNameState.value,
+            onValueChange = { newHabitNameState.value = it },
+            label = { Text("New Habit Name") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        )
+        Button(
+            onClick = {
+                viewModel.addHabit(
+                    name = newHabitNameState.value,
+                    frequency = Frequency.DAILY,
+                    streak = 0
+                )
+                newHabitNameState.value = "" // Clear input field after adding habit
+            },
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
+            Text(text = "Add Habit")
+        }
+        LazyColumn {
+            items(items = viewModel.habits) { item ->
+                HabitItemRow(item = item, viewModel = viewModel) // Pass viewModel here
+            }
+        }
+    }
+}
 
 
 
