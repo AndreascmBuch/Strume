@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
+import com.example.myapplication.habit.HabitsScreen
 import com.example.myapplication.homescreen.AddTaskDialog
 import com.example.myapplication.homescreen.HomeScreen
 import com.example.myapplication.homescreen.HomeViewModel
@@ -94,7 +95,7 @@ fun Navigation(homeViewModel: HomeViewModel) {
                 Calendar()
             }
             composable(Screens.HabitsScreen.name) {
-
+                HabitsScreen()
             }
             composable(Screens.ListScreen.name) {
                 // Your list screen content
