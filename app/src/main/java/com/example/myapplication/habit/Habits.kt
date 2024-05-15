@@ -57,7 +57,7 @@ class HabitsViewModel : ViewModel() {
 
     fun addHabit(name: String, frequency: Frequency, streak: Int) {
         val habit = Habit(
-            id = habits.size + 1, // You can generate a unique ID here
+            id = habits.size + 1,
             name = name,
             frequency = frequency,
             _streak = streak
@@ -65,7 +65,7 @@ class HabitsViewModel : ViewModel() {
         habits.add(habit)
     }
 
-    // Other methods remain the same
+
 }
 
 
@@ -137,7 +137,7 @@ fun HabitItemRow(item: Habit, viewModel: HabitsViewModel) {
             ),
             selectedFrequency = item.frequency,
             onFrequencySelected = { frequency ->
-                /*viewModel.updateHabitFrequency(item, frequency)*/
+
             }
         )
     }
@@ -146,7 +146,7 @@ fun HabitItemRow(item: Habit, viewModel: HabitsViewModel) {
 
 @Composable
 fun HabitsScreen() {
-    val viewModel = remember { HabitsViewModel() } // Remember to use remember to retain state
+    val viewModel = remember { HabitsViewModel() }
     val newHabitNameState = remember { mutableStateOf("") }
 
     Column(
@@ -177,7 +177,7 @@ fun HabitsScreen() {
                     frequency = Frequency.DAILY,
                     streak = 0
                 )
-                newHabitNameState.value = "" // Clear input field after adding habit
+                newHabitNameState.value = ""
             },
             modifier = Modifier.padding(bottom = 8.dp)
         ) {
@@ -185,7 +185,7 @@ fun HabitsScreen() {
         }
         LazyColumn {
             items(items = viewModel.habits) { item ->
-                HabitItemRow(item = item, viewModel = viewModel) // Pass viewModel here
+                HabitItemRow(item = item, viewModel = viewModel)
             }
         }
     }
