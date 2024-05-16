@@ -13,14 +13,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,46 +33,55 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
-enum class Frequency {
-    DAILY,
-    EVERY_SECOND_DAY,
-    WEEKLY,
+
+sealed class Frequency {
+    data object Daily : Frequency()
+    data object EverySecondDay : Frequency()
+    data object Weekly : Frequency()
 }
 
 data class Habit(
     val id: Int,
     val name: String,
-    var frequency: Frequency,
-    private var _streak: Int
+    var initialFrequency: Frequency,
+    var initialStreak: Int
 ) {
-    var streak: Int by mutableIntStateOf(_streak)
+    var frequency: Frequency by mutableStateOf(initialFrequency)
+    var streak: Int by mutableIntStateOf(initialStreak)
         private set
 
     fun incrementStreak() {
-        _streak++
-        streak = _streak
+        streak++
     }
 }
 
+
+
+
 class HabitsViewModel : ViewModel() {
-    val habits = mutableListOf<Habit>()
+    val habits = mutableStateListOf<Habit>()
 
     fun addHabit(name: String, frequency: Frequency, streak: Int) {
         val habit = Habit(
             id = habits.size + 1,
             name = name,
-            frequency = frequency,
-            _streak = streak
+            initialFrequency = frequency,
+            initialStreak = streak
         )
         habits.add(habit)
     }
 
-
+    fun updateHabitFrequency(id: Int, frequency: Frequency) {
+        val habit = habits.find { it.id == id }
+        if (habit != null) {
+            habit.frequency = frequency
+        }
+    }
 }
-
-
 
 @Composable
 fun DropDownMenu(
@@ -80,10 +93,12 @@ fun DropDownMenu(
 
     Box {
         Text(
-            text = selectedFrequency.name,
+            text = ("  Habit frequency: ${selectedFrequency.javaClass.simpleName}"),
+            color = Color.White,
             modifier = Modifier
                 .clickable(onClick = { isExpanded = true })
                 .padding(8.dp)
+
         )
 
         DropdownMenu(
@@ -92,7 +107,7 @@ fun DropDownMenu(
         ) {
             frequencies.forEach { frequency ->
                 DropdownMenuItem(
-                    text = { Text(text = frequency.name) },
+                    text = { Text(text = frequency.javaClass.simpleName) },
                     onClick = {
                         onFrequencySelected(frequency)
                         isExpanded = false
@@ -103,7 +118,6 @@ fun DropDownMenu(
     }
 }
 
-
 @Composable
 fun HabitItemRow(item: Habit, viewModel: HabitsViewModel) {
     Column(
@@ -112,11 +126,12 @@ fun HabitItemRow(item: Habit, viewModel: HabitsViewModel) {
             .clip(RoundedCornerShape(20.dp))
             .background(color = Color.Gray)
             .fillMaxWidth()
-            .clickable {(item.incrementStreak()) }
+            .clickable { item.incrementStreak() }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 16.dp)
+            .fillMaxWidth()
         ) {
             Text(
                 text = item.name,
@@ -125,28 +140,36 @@ fun HabitItemRow(item: Habit, viewModel: HabitsViewModel) {
             )
             Text(
                 text = "${item.streak}",
+                fontSize = 30.sp,
                 color = Color.White,
                 modifier = Modifier.align(Alignment.CenterVertically)
+                    .padding(top = 20.dp,end = 10.dp)
+            )
+            Icon(
+                imageVector = Icons.Default.Favorite,
+                contentDescription = null,
+                tint = Color.Red,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+            DropDownMenu(
+                frequencies = listOf(
+                    Frequency.Daily,
+                    Frequency.EverySecondDay,
+                    Frequency.Weekly
+                ),
+                selectedFrequency = item.frequency,
+                onFrequencySelected = { frequency ->
+                    viewModel.updateHabitFrequency(item.id, frequency)
+                }
             )
         }
-        DropDownMenu(
-            frequencies = listOf(
-                Frequency.DAILY,
-                Frequency.EVERY_SECOND_DAY,
-                Frequency.WEEKLY
-            ),
-            selectedFrequency = item.frequency,
-            onFrequencySelected = { frequency ->
 
-            }
-        )
     }
 }
 
-
 @Composable
 fun HabitsScreen() {
-    val viewModel = remember { HabitsViewModel() }
+    val viewModel: HabitsViewModel = viewModel()
     val newHabitNameState = remember { mutableStateOf("") }
 
     Column(
@@ -174,7 +197,7 @@ fun HabitsScreen() {
             onClick = {
                 viewModel.addHabit(
                     name = newHabitNameState.value,
-                    frequency = Frequency.DAILY,
+                    frequency = Frequency.Daily,
                     streak = 0
                 )
                 newHabitNameState.value = ""
@@ -185,11 +208,15 @@ fun HabitsScreen() {
         }
         LazyColumn {
             items(items = viewModel.habits) { item ->
-                HabitItemRow(item = item, viewModel = viewModel)
+                HabitItemRow(
+                    item = item,
+                    viewModel = viewModel
+                )
             }
         }
     }
 }
+
 
 
 
