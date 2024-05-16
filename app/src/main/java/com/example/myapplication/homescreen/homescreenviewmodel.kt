@@ -11,7 +11,6 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
-
 class HomeViewModel : ViewModel() {
     var tasks = mutableStateListOf<Task>()
     var showDialog by mutableStateOf(false)
@@ -24,25 +23,42 @@ class HomeViewModel : ViewModel() {
     var selectedDateString by mutableStateOf(LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE, d'th' MMMM")))
     var showDatePickerDialog by mutableStateOf(false)
     var showTimePickerDialog by mutableStateOf(false)
+    private var nextTaskId = 0  // To assign unique IDs
+    var editingTaskId by mutableStateOf<Int?>(null)
 
-
-    fun addTask() {
-        if (textInput.isNotBlank()) {
-            // Use formatted date string for task date
-            val task = Task(name = textInput, date = selectedDateString, time = selectedTime, icon = "default_icon")
+    fun addOrUpdateTask() {
+        val date = selectedDateString
+        val time = selectedTime
+        editingTaskId?.let {taskId ->
+            // Find and update existing task
+            tasks.find { task -> task.id == taskId }?.apply {
+                this.observableName = textInput  // Update observable property
+                this.observableDate = date      // Update observable property
+                this.observableTime = time
+            }
+        } ?: run {
+            // Add new task
+            val task = Task(nextTaskId++, textInput, date, time, "default_icon")
             tasks.add(task)
-            // Sorting tasks should now consider the LocalDate parsed from date string if necessary
-            tasks.sortWith(Comparator.comparing<Task, LocalDate> { LocalDate.parse(it.date, DateTimeFormatter.ofPattern("EEEE, d'th' MMMM")) }
-                .thenComparing(Comparator.comparing<Task, LocalTime> { safeParseTime(it.time) }))
-            // Log the addition
-            Log.d("HomeViewModel", "Task added: $task, Total tasks now: ${tasks.size}")
-            // Reset inputs and close dialog
-            textInput = ""  // Clear the input
-            selectedTime = availableTimes.first()  // Reset time
-            showDialog = false  // Close dialog
-        } else {
-            Log.d("HomeViewModel", "No task input to add")
         }
+        showDialog = false
+        resetInputs()
+    }
+
+    fun editTask(taskId: Int) {
+        editingTaskId = taskId
+        tasks.find { it.id == taskId }?.let {
+            textInput = it.name
+            selectedDateString = it.date
+            selectedTime = it.time
+        }
+        showDialog = true
+    }
+
+    private fun resetInputs() {
+        textInput = ""
+        selectedTime = availableTimes.first()
+        editingTaskId = null
     }
 
     private fun safeParseTime(time: String): LocalTime {
@@ -54,10 +70,12 @@ class HomeViewModel : ViewModel() {
     }
 
     fun showAddTaskDialog() {
+        editingTaskId = null  // Reset the editing ID to ensure we are adding a new task
         showDialog = true
     }
 
     fun hideAddTaskDialog() {
         showDialog = false
+        resetInputs()  // Reset inputs on dialog close
     }
 }
