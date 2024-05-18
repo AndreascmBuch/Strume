@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,52 +36,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-
-
-sealed class Frequency {
-    data object Daily : Frequency()
-    data object EverySecondDay : Frequency()
-    data object Weekly : Frequency()
-}
-
-data class Habit(
-    val id: Int,
-    val name: String,
-    var initialFrequency: Frequency,
-    var initialStreak: Int
-) {
-    var frequency: Frequency by mutableStateOf(initialFrequency)
-    var streak: Int by mutableIntStateOf(initialStreak)
-        private set
-
-    fun incrementStreak() {
-        streak++
-    }
-}
-
-
-
-
-class HabitsViewModel : ViewModel() {
-    val habits = mutableStateListOf<Habit>()
-
-    fun addHabit(name: String, frequency: Frequency, streak: Int) {
-        val habit = Habit(
-            id = habits.size + 1,
-            name = name,
-            initialFrequency = frequency,
-            initialStreak = streak
-        )
-        habits.add(habit)
-    }
-
-    fun updateHabitFrequency(id: Int, frequency: Frequency) {
-        val habit = habits.find { it.id == id }
-        if (habit != null) {
-            habit.frequency = frequency
-        }
-    }
-}
+import android.widget.Toast
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.window.Dialog
 
 @Composable
 fun DropDownMenu(
@@ -93,21 +56,20 @@ fun DropDownMenu(
 
     Box {
         Text(
-            text = ("  Habit frequency: ${selectedFrequency.javaClass.simpleName}"),
+            text = "Habit frequency: ${selectedFrequency::class.simpleName}",
+            fontSize = 20.sp,
             color = Color.White,
             modifier = Modifier
                 .clickable(onClick = { isExpanded = true })
                 .padding(8.dp)
-
         )
-
         DropdownMenu(
             expanded = isExpanded,
             onDismissRequest = { isExpanded = false }
         ) {
             frequencies.forEach { frequency ->
                 DropdownMenuItem(
-                    text = { Text(text = frequency.javaClass.simpleName) },
+                    text = { Text(text = frequency::class.simpleName ?: "") },
                     onClick = {
                         onFrequencySelected(frequency)
                         isExpanded = false
@@ -120,57 +82,119 @@ fun DropDownMenu(
 
 @Composable
 fun HabitItemRow(item: Habit, viewModel: HabitsViewModel) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .padding(vertical = 8.dp)
             .clip(RoundedCornerShape(20.dp))
             .background(color = Color.Gray)
             .fillMaxWidth()
-            .clickable { item.incrementStreak() }
+            .clickable {
+                val incremented = item.incrementStreak()
+                if (!incremented) {
+                    Toast.makeText(
+                        context,
+                        "You have already tapped. Please wait for the required time period.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 16.dp)
-            .fillMaxWidth()
+            modifier = Modifier
         ) {
             Text(
                 text = item.name,
+                fontSize = 20.sp,
                 color = Color.White,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).padding(start = 18.dp)
             )
             Text(
                 text = "${item.streak}",
-                fontSize = 30.sp,
+                fontSize = 50.sp,
                 color = Color.White,
-                modifier = Modifier.align(Alignment.CenterVertically)
-                    .padding(top = 20.dp,end = 10.dp)
+                modifier = Modifier.align(Alignment.CenterVertically).padding(0.dp)
             )
             Icon(
                 imageVector = Icons.Default.Favorite,
                 contentDescription = null,
                 tint = Color.Red,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-            DropDownMenu(
-                frequencies = listOf(
-                    Frequency.Daily,
-                    Frequency.EverySecondDay,
-                    Frequency.Weekly
-                ),
-                selectedFrequency = item.frequency,
-                onFrequencySelected = { frequency ->
-                    viewModel.updateHabitFrequency(item.id, frequency)
-                }
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .size(50.dp)
+                    .padding(0.dp)
             )
         }
+        DropDownMenu(
+            frequencies = listOf(
+                Frequency.Daily,
+                Frequency.EverySecondDay,
+                Frequency.Weekly
+            ),
+            selectedFrequency = item.frequency,
+            onFrequencySelected = { frequency ->
+                viewModel.updateHabitFrequency(item.id, frequency)
+            }
+        )
+    }
+}
 
+@Composable
+fun AddHabitDialog(
+    showDialog: Boolean,
+    onDismissRequest: () -> Unit,
+    onHabitAdd: (String) -> Unit
+) {
+    if (showDialog) {
+        Dialog(onDismissRequest = onDismissRequest) {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surface
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    val habitNameState = remember { mutableStateOf("") }
+
+                    Text(text = "Add New Habit", style = MaterialTheme.typography.headlineLarge)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TextField(
+                        value = habitNameState.value,
+                        onValueChange = { habitNameState.value = it },
+                        label = { Text("Habit Name") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        TextButton(onClick = onDismissRequest) {
+                            Text("Cancel")
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Button(onClick = {
+                            onHabitAdd(habitNameState.value)
+                            habitNameState.value = ""
+                            onDismissRequest()
+                        }) {
+                            Text("Add")
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
 @Composable
 fun HabitsScreen() {
     val viewModel: HabitsViewModel = viewModel()
-    val newHabitNameState = remember { mutableStateOf("") }
+    val showDialog = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -185,23 +209,8 @@ fun HabitsScreen() {
             text = "Keep up your good Habits for a healthy life",
             color = Color.White
         )
-        TextField(
-            value = newHabitNameState.value,
-            onValueChange = { newHabitNameState.value = it },
-            label = { Text("New Habit Name") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-        )
         Button(
-            onClick = {
-                viewModel.addHabit(
-                    name = newHabitNameState.value,
-                    frequency = Frequency.Daily,
-                    streak = 0
-                )
-                newHabitNameState.value = ""
-            },
+            onClick = { showDialog.value = true },
             modifier = Modifier.padding(bottom = 8.dp)
         ) {
             Text(text = "Add Habit")
@@ -215,6 +224,17 @@ fun HabitsScreen() {
             }
         }
     }
+    AddHabitDialog(
+        showDialog = showDialog.value,
+        onDismissRequest = { showDialog.value = false },
+        onHabitAdd = { habitName ->
+            viewModel.addHabit(
+                name = habitName,
+                frequency = Frequency.Daily,
+                streak = 0
+            )
+        }
+    )
 }
 
 
