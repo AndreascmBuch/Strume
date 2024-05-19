@@ -55,6 +55,11 @@ class HomeViewModel : ViewModel() {
         showDialog = true
     }
 
+    fun deleteTask(taskId: Int) {
+        tasks.removeIf { it.id == taskId }
+        hideAddTaskDialog()  // Close the dialog after deleting the task
+    }
+
     private fun resetInputs() {
         textInput = ""
         selectedTime = availableTimes.first()
