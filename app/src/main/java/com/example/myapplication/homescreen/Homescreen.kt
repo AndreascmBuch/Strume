@@ -82,7 +82,8 @@ fun AddTaskDialog(viewModel: HomeViewModel) {
 
         AlertDialog(
             onDismissRequest = { viewModel.hideAddTaskDialog() },
-            title = { Text(if (viewModel.editingTaskId == null) "Add New Task" else "Edit Task") },            text = {
+            title = { Text(if (viewModel.editingTaskId == null) "Add New Task" else "Edit Task") },
+            text = {
                 Column {
                     OutlinedTextField(
                         value = viewModel.textInput,
@@ -90,10 +91,19 @@ fun AddTaskDialog(viewModel: HomeViewModel) {
                         label = { Text("Task Details") }
                     )
                     Button(onClick = { showDatePicker() }) {
-                        Text("Select Date: ${viewModel.selectedDate}")
+                        Text("Select Date: ${viewModel.selectedDateString}")
                     }
                     Button(onClick = { showTimePicker() }) {
                         Text("Select Time: ${viewModel.selectedTime}")
+                    }
+                    if (viewModel.editingTaskId != null) {
+                        Button(
+                            onClick = { viewModel.deleteTask(viewModel.editingTaskId!!) },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                            modifier = Modifier.padding(top = 8.dp)
+                        ) {
+                            Text("Delete", color = Color.White)
+                        }
                     }
                 }
             },
