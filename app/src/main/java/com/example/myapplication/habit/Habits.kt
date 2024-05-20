@@ -201,10 +201,11 @@ fun HabitsScreen(viewModel: HabitsViewModel = viewModel()) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Text(text = "Habits", color = Color.White)
+        Text(text = "Habits", color = Color.White,fontSize = 36.sp)
         Text(
             text = "Keep up your good Habits for a healthy life",
-            color = Color.White
+            color = Color.White,
+            fontSize = 20.sp
         )
         LazyColumn {
             items(items = viewModel.habits) { item ->
