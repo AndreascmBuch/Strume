@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,7 +33,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import android.widget.Toast
 import androidx.compose.foundation.layout.Spacer
@@ -192,9 +190,8 @@ fun AddHabitDialog(
 }
 
 @Composable
-fun HabitsScreen() {
-    val viewModel: HabitsViewModel = viewModel()
-    val showDialog = remember { mutableStateOf(false) }
+fun HabitsScreen(viewModel: HabitsViewModel = viewModel()) {
+    val showDialog by viewModel.showAddHabitDialog
 
     Column(
         modifier = Modifier
@@ -209,12 +206,6 @@ fun HabitsScreen() {
             text = "Keep up your good Habits for a healthy life",
             color = Color.White
         )
-        Button(
-            onClick = { showDialog.value = true },
-            modifier = Modifier.padding(bottom = 8.dp)
-        ) {
-            Text(text = "Add Habit")
-        }
         LazyColumn {
             items(items = viewModel.habits) { item ->
                 HabitItemRow(
@@ -225,14 +216,15 @@ fun HabitsScreen() {
         }
     }
     AddHabitDialog(
-        showDialog = showDialog.value,
-        onDismissRequest = { showDialog.value = false },
+        showDialog = showDialog,
+        onDismissRequest = { viewModel.hideAddHabitDialog() },
         onHabitAdd = { habitName ->
             viewModel.addHabit(
                 name = habitName,
                 frequency = Frequency.Daily,
                 streak = 0
             )
+            viewModel.hideAddHabitDialog()
         }
     )
 }
