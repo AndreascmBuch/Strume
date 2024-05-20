@@ -1,4 +1,4 @@
-package com.example.myapplication.habit
+package com.example.myapplication.habitscreen
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
