@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
+import com.example.myapplication.habitscreen.HabitsScreen
+import com.example.myapplication.habitscreen.HabitsViewModel
 import com.example.myapplication.homescreen.AddTaskDialog
 import com.example.myapplication.homescreen.HomeScreen
 import com.example.myapplication.homescreen.HomeViewModel
@@ -44,6 +46,7 @@ fun Navigation(homeViewModel: HomeViewModel) {
     val currentDestination = navBackStackEntry?.destination
 
     val homeViewModel: HomeViewModel = viewModel()
+    val habitsViewModel: HabitsViewModel = viewModel()
 
     Scaffold(
         bottomBar = {
@@ -94,7 +97,7 @@ fun Navigation(homeViewModel: HomeViewModel) {
                 Calendar()
             }
             composable(Screens.HabitsScreen.name) {
-
+                HabitsScreen(habitsViewModel)
             }
             composable(Screens.ListScreen.name) {
                 // Your list screen content
@@ -129,7 +132,7 @@ fun Navigation(homeViewModel: HomeViewModel) {
                             // Action for Calendar screen
                         }
                         Screens.HabitsScreen.name -> {
-                            // Action for Habits screen
+                            habitsViewModel.showAddHabitDialog()
                         }
                         Screens.ListScreen.name -> {
                             // Action for List screen
