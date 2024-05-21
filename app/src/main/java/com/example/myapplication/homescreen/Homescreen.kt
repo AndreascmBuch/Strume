@@ -183,7 +183,7 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
                     .background(Color.Transparent)
             )
 
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(60.dp))
 
         LazyColumn(
             modifier = Modifier
@@ -197,7 +197,9 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
-                    modifier = Modifier.padding(vertical = 4.dp)
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                    .padding(top = 18.dp),
                 )
                 Text(
                     text = "${task.observableName}, ${task.observableTime}",
