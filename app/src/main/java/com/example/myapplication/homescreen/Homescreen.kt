@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,13 +21,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.myapplication.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
-import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.zIndex
 
 fun getDayOfMonthSuffix(day: Int): String {
     return when {
@@ -38,7 +49,6 @@ fun getDayOfMonthSuffix(day: Int): String {
     }
 }
 
-// Hovedskærmskomponenten
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTaskDialog(viewModel: HomeViewModel) {
@@ -47,18 +57,17 @@ fun AddTaskDialog(viewModel: HomeViewModel) {
     if (viewModel.showDialog) {
         val calendar = Calendar.getInstance()
 
-
-        // Launch DatePickerDialog
         fun showDatePicker() {
             val datePickerDialog = android.app.DatePickerDialog(
                 context,
                 { _, year, month, dayOfMonth ->
                     val localDate = LocalDate.of(year, month + 1, dayOfMonth)
-                    viewModel.selectedDate = localDate // Store the LocalDate
-                    // Format and store the string representation
-                    viewModel.selectedDateString = localDate.format(DateTimeFormatter.ofPattern("EEEE, d'" + getDayOfMonthSuffix(dayOfMonth) + "' MMMM"))
-                    Log.d("DatePicker", "Selected Date String: ${viewModel.selectedDateString}") // Add this line
-                    viewModel.showDatePickerDialog = false // Close the date picker dialog
+                    viewModel.selectedDate = localDate
+                    viewModel.selectedDateString = localDate.format(
+                        DateTimeFormatter.ofPattern("EEEE, d'" + getDayOfMonthSuffix(dayOfMonth) + "' MMMM")
+                    )
+                    Log.d("DatePicker", "Selected Date String: ${viewModel.selectedDateString}")
+                    viewModel.showDatePickerDialog = false
                 },
                 viewModel.selectedDate.year,
                 viewModel.selectedDate.monthValue - 1,
@@ -67,7 +76,6 @@ fun AddTaskDialog(viewModel: HomeViewModel) {
             datePickerDialog.show()
         }
 
-        // Launch TimePickerDialog
         fun showTimePicker() {
             TimePickerDialog(
                 context,
@@ -123,45 +131,70 @@ fun AddTaskDialog(viewModel: HomeViewModel) {
 
 @Composable
 fun HomeScreen(homeViewModel: HomeViewModel) {
-    // This log will show the number of tasks in the ViewModel
     Log.d("HomeScreen", "Recomposing with ${homeViewModel.tasks.size} tasks")
-
-    // Correct the ViewModel instance reference for logging
-    Log.d("HomeScreen", "ViewModel instance in HomeScreen: $homeViewModel")
 
     val viewModel: HomeViewModel = viewModel()
     val tasks = homeViewModel.tasks
 
     LaunchedEffect(tasks) {
         Log.d("HomeScreen", "Tasks have changed. Size: ${tasks.size}")
-        // Potentially other side effects
     }
 
-
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color(0xFF4E4853))
-            .padding(start = 16.dp, end = 16.dp, top = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
     ) {
-        Text(text = "Hello",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
-        )
-        Text(text = "Here are your tasks for the day",
-            fontSize = 16.sp,
-            color = Color.White
+        // Background image
+        Image(
+            painter = painterResource(id = R.drawable.homescreenshapes),
+            contentDescription = "Shape",
+            contentScale = ContentScale.Crop,  // Ensure the image covers the top area
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
         )
 
-        LazyColumn(modifier = Modifier.padding(top = 24.dp)) {
+        // Overlaying text on top of the image
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 60.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Hello",
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .background(Color.Transparent)
+            )
+            Text(
+                text = "Here are your tasks for the day",
+                fontSize = 16.sp,
+                color = Color.White,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .background(Color.Transparent)
+            )
+
+            Spacer(modifier = Modifier.height(100.dp))
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp, 24.dp, 24.dp, 0.dp) // Adjusting padding to ensure it fills width
+        ) {
             items(tasks) { task ->
                 Log.d("HomeScreen", "Displaying task: ${task.name}, ${task.date}, ${task.time}")
                 Text(
                     text = task.date,
-                    color = Color.White,  // Making the date stand out
+                    color = Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     modifier = Modifier.padding(vertical = 4.dp)
@@ -172,17 +205,17 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
                     fontSize = 15.sp,
                     modifier = Modifier
                         .clip(RoundedCornerShape(20.dp))
-                        .background(Color(0xFF737483)) // Grey background only for this part
-                        .padding(14.dp) // Padding inside the background
-                        .fillMaxWidth() // Ensure the background fills the width
+                        .background(Color(0xFF737483))
+                        .padding(14.dp)
+                        .fillMaxWidth()
                         .clickable { homeViewModel.editTask(task.id) }
                 )
                 Log.d("HomeScreen", "Displaying task: ${task.name}")
             }
             Log.d("HomeScreen", "LazyColumn recomposing with ${viewModel.tasks.size} tasks")
         }
-        }
+    }
 
-        // Call the AddTaskDialog composable function
-        AddTaskDialog(viewModel)
-}
+    AddTaskDialog(viewModel)
+}}
+
