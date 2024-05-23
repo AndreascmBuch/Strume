@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myapplication.homescreen.HomeViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,13 +45,15 @@ fun Calendar() {
         ) {
             Text(
                 text = "Plan your life",
-                fontSize = 36.sp,
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold,
                 color = Color.White,
                 modifier = Modifier.padding(top = 42.dp, bottom = 4.dp)
             )
             Text(
                 text = "Add event forward in time",
                 fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
                 color = Color.White,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
@@ -65,6 +68,7 @@ fun Calendar() {
             Text(
                 text = "june 2024",
                 fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
                 color = Color.White,
                 modifier = Modifier
                     .align(Alignment.Start)
@@ -158,6 +162,7 @@ fun Calendar() {
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
