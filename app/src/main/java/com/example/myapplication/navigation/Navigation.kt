@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,7 +44,7 @@ import com.example.myapplication.welcomescreen.Welcome
 
 @OptIn(UnstableApi::class)
 @Composable
-fun Navigation(state: TaskState,onEvent: (TaskEvent) -> Unit) {
+fun Navigation(state: TaskState, onEvent: (TaskEvent) -> Unit) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -70,15 +71,26 @@ fun Navigation(state: TaskState,onEvent: (TaskEvent) -> Unit) {
                                     launchSingleTop = true
                                     restoreState = true
                                 }
+
                             },
                             icon = {
                                 Icon(
                                     imageVector = navItem.icon,
                                     contentDescription = null,
                                     tint = Color(0xFF383838)
+
                                 )
+                            },
+                            label = {
+                                Text(
+                                    text = navItem.title,
+                                    color = Color.White
+                                )
+
                             }
+
                         )
+
                     }
                 }
             }
@@ -107,7 +119,6 @@ fun Navigation(state: TaskState,onEvent: (TaskEvent) -> Unit) {
                 // Your list screen content
             }
         }
-
     }
     Box(
         modifier = Modifier
@@ -132,12 +143,16 @@ fun Navigation(state: TaskState,onEvent: (TaskEvent) -> Unit) {
                             Log.d("Navigation", "ViewModel instance from FAB:")
                             onEvent(TaskEvent.ShowDialog)
                         }
+
                         Screens.CalendarScreen.name -> {
                             // Action for Calendar screen
                         }
+
                         Screens.HabitsScreen.name -> {
+                            Log.d("Navigation", "HabitViewModel instance from FAB:")
                             habitsViewModel.showAddHabitDialog()
                         }
+
                         Screens.ListScreen.name -> {
                             // Action for List screen
                         }
