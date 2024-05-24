@@ -2,12 +2,10 @@ package com.example.myapplication.homescreen
 
 import android.app.TimePickerDialog
 import android.util.Log
-import android.widget.TimePicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,7 +23,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myapplication.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -33,11 +30,9 @@ import java.util.Calendar
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.zIndex
+import com.example.myapplication.navigation.Navigation
 
 fun getDayOfMonthSuffix(day: Int): String {
     return when {
@@ -49,95 +44,100 @@ fun getDayOfMonthSuffix(day: Int): String {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
-fun AddTaskDialog(viewModel: HomeViewModel) {
+fun AddTaskDialog(
+    state: TaskState,
+    onEvent: (TaskEvent) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
+    val calendar = Calendar.getInstance()
 
-    if (viewModel.showDialog) {
-        val calendar = Calendar.getInstance()
-
-        fun showDatePicker() {
-            val datePickerDialog = android.app.DatePickerDialog(
-                context,
-                { _, year, month, dayOfMonth ->
-                    val localDate = LocalDate.of(year, month + 1, dayOfMonth)
-                    viewModel.selectedDate = localDate
-                    viewModel.selectedDateString = localDate.format(
-                        DateTimeFormatter.ofPattern("EEEE, d'" + getDayOfMonthSuffix(dayOfMonth) + "' MMMM")
-                    )
-                    Log.d("DatePicker", "Selected Date String: ${viewModel.selectedDateString}")
-                    viewModel.showDatePickerDialog = false
-                },
-                viewModel.selectedDate.year,
-                viewModel.selectedDate.monthValue - 1,
-                viewModel.selectedDate.dayOfMonth
-            )
-            datePickerDialog.show()
-        }
-
-        fun showTimePicker() {
-            TimePickerDialog(
-                context,
-                { _: TimePicker, hourOfDay: Int, minute: Int ->
-                    viewModel.selectedTime = String.format("%02d:%02d", hourOfDay, minute)
-                },
-                calendar.get(Calendar.HOUR_OF_DAY),
-                calendar.get(Calendar.MINUTE),
-                true
-            ).show()
-        }
-
-        AlertDialog(
-            onDismissRequest = { viewModel.hideAddTaskDialog() },
-            title = { Text(if (viewModel.editingTaskId == null) "Add New Task" else "Edit Task") },
-            text = {
-                Column {
-                    OutlinedTextField(
-                        value = viewModel.textInput,
-                        onValueChange = { viewModel.textInput = it },
-                        label = { Text("Task Details") }
-                    )
-                    Button(onClick = { showDatePicker() }) {
-                        Text("Select Date: ${viewModel.selectedDateString}")
-                    }
-                    Button(onClick = { showTimePicker() }) {
-                        Text("Select Time: ${viewModel.selectedTime}")
-                    }
-                    if (viewModel.editingTaskId != null) {
-                        Button(
-                            onClick = { viewModel.deleteTask(viewModel.editingTaskId!!) },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                            modifier = Modifier.padding(top = 8.dp)
-                        ) {
-                            Text("Delete", color = Color.White)
-                        }
-                    }
-                }
+    fun showDatePicker() {
+        val datePickerDialog = android.app.DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                val localDate = LocalDate.of(year, month + 1, dayOfMonth)
+                val dateString = localDate.format(
+                    DateTimeFormatter.ofPattern("EEEE, d'${getDayOfMonthSuffix(dayOfMonth)}' MMMM")
+                )
+                onEvent(TaskEvent.SetDate(dateString))
             },
-            confirmButton = {
-                Button(onClick = { viewModel.addOrUpdateTask() }) {
-                    Text(if (viewModel.editingTaskId == null) "Add" else "Update")
-                }
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+        datePickerDialog.show()
+    }
+
+    fun showTimePicker() {
+        TimePickerDialog(
+            context,
+            { _, hourOfDay, minute ->
+                val timeString = String.format("%02d:%02d", hourOfDay, minute)
+                onEvent(TaskEvent.SetTime(timeString))
             },
-            dismissButton = {
-                Button(onClick = { viewModel.hideAddTaskDialog() }) {
-                    Text("Cancel")
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE),
+            true
+        ).show()
+    }
+
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = {
+            onEvent(TaskEvent.HideDialog)
+        },
+        title = { Text(text = "Add Task") },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                TextField(
+                    value = state.name,
+                    onValueChange = {
+                        onEvent(TaskEvent.SetName(it)) // Change: SetName event to update task name
+                    },
+                    placeholder = {
+                        Text(text = "Task Name")
+                    }
+                )
+                Button(onClick = { showDatePicker() }) { // Change: Button for showing date picker
+                    Text("Select Date: ${state.date}")
+                }
+                Button(onClick = { showTimePicker() }) { // Change: Button for showing time picker
+                    Text("Select Time: ${state.time}")
                 }
             }
-        )
-    }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onEvent(TaskEvent.SaveTask)
+                }
+            ) {
+                Text(text = "Save")
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = {
+                    onEvent(TaskEvent.HideDialog)
+                }
+            ) {
+                Text(text = "Cancel")
+            }
+        }
+    )
 }
 
 @Composable
-fun HomeScreen(homeViewModel: HomeViewModel) {
-    Log.d("HomeScreen", "Recomposing with ${homeViewModel.tasks.size} tasks")
+fun HomeScreen(state: TaskState, onEvent: (TaskEvent) -> Unit) {
+    Log.d("HomeScreen", "Recomposing with ${state.task.size} tasks")
 
-    val viewModel: HomeViewModel = viewModel()
-    val tasks = homeViewModel.tasks
-
-    LaunchedEffect(tasks) {
-        Log.d("HomeScreen", "Tasks have changed. Size: ${tasks.size}")
+    LaunchedEffect(state.task) {
+        Log.d("HomeScreen", "Tasks have changed. Size: ${state.task.size}")
     }
 
     Box(
@@ -185,39 +185,47 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
 
             Spacer(modifier = Modifier.height(60.dp))
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp, 24.dp, 24.dp, 0.dp) // Adjusting padding to ensure it fills width
-        ) {
-            items(tasks) { task ->
-                Log.d("HomeScreen", "Displaying task: ${task.name}, ${task.date}, ${task.time}")
-                Text(
-                    text = task.date,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    modifier = Modifier
-                        .padding(vertical = 4.dp)
-                    .padding(top = 18.dp),
-                )
-                Text(
-                    text = "${task.observableName}, ${task.observableTime}",
-                    color = Color.White,
-                    fontSize = 15.sp,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(Color(0xFF737483))
-                        .padding(14.dp)
-                        .fillMaxWidth()
-                        .clickable { homeViewModel.editTask(task.id) }
-                )
-                Log.d("HomeScreen", "Displaying task: ${task.name}")
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp, 24.dp, 24.dp, 0.dp)
+            ) {
+                items(state.task) { task ->
+                    Log.d("HomeScreen", "Displaying task: ${task.name}, ${task.date}, ${task.time}")
+                    Text(
+                        text = task.date.toString(),
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        modifier = Modifier
+                            .padding(vertical = 4.dp)
+                            .padding(top = 18.dp),
+                    )
+                    Text(
+                        text = "${task.name}, ${task.time}",
+                        color = Color.White,
+                        fontSize = 15.sp,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(Color(0xFF737483))
+                            .padding(14.dp)
+                            .fillMaxWidth()
+                            .clickable { /*homeViewModel.editTask(task.id)*/ }
+                    )
+                    Log.d("HomeScreen", "Displaying task: ${task.name}")
+                }
+                Log.d("HomeScreen", "LazyColumn recomposing with ${state.task.size} tasks")
             }
-            Log.d("HomeScreen", "LazyColumn recomposing with ${viewModel.tasks.size} tasks")
+        }
+        // AddTaskDialog is conditionally displayed based on state.isAddingTask
+        if (state.isAddingTask) {
+            AddTaskDialog(
+                state = state,
+                onEvent = onEvent,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
         }
     }
+}
 
-    AddTaskDialog(viewModel)
-}}
 

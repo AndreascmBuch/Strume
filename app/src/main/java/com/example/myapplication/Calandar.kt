@@ -19,13 +19,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myapplication.homescreen.TaskState
 import com.example.myapplication.R
 import com.example.myapplication.homescreen.HomeViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Calendar() {
+fun Calendar(state:TaskState) {
     var selectedDate by remember { mutableIntStateOf(-1) }
     val weekdays = listOf("mon", "tue", "wed", "thu", "fri", "sat", "sun")
 
@@ -161,32 +162,78 @@ fun Calendar() {
                 }
             }
         }
-
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet = false
-                },
-                sheetState = sheetState
+        val daysInMonth = 30
+        val firstDayOffset =
+            5 // June 1st is a Saturday, so offset is 5 (0-based index for Saturday)
+        for (week in 0 until 6) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(270.dp)  // Adjust height of the bottom sheet
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    // TBD: Adjust content to align with added tasks on the home screen
-                    Text("Date: $selectedDate/06, Lorem Ipsum", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                for (day in 0 until 7) {
+                    val date = week * 7 + day - firstDayOffset + 1
+                    if (date in 1..daysInMonth) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .weight(1f)
+                                .size(48.dp)
+                                .clip(CircleShape)
+                                .background(if (selectedDate == date) Color(0x8021B6E8) else Color.Transparent)
+                                .clickable {
+                                    selectedDate = date
+                                    scope.launch { sheetState.show() }
+                                    showBottomSheet = true
+                                }
+                        ) {
+                            Text(
+                                text = "$date",
+                                fontSize = 18.sp,
+                                color = Color.White
+                            )
+                        }
+                    } else {
+                        Spacer(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .weight(1f)
+                                .size(48.dp)
+                        )
+                    }
                 }
             }
         }
     }
-}
 
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewCalendar() {
-    Calendar()
+    if (showBottomSheet) {
+        val tasksForSelectedDate = state.task.filter {
+            val dayOfMonth = it.date.substring(0, 2)
+            dayOfMonth == selectedDate.toString().padStart(2, '0')
+        }
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+            },
+            sheetState = sheetState
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(285.dp)  // Adjust height of the bottom sheet
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                tasksForSelectedDate.forEach { task ->
+                    Text(
+                        "Task: ${task.name}, Date: ${task.date}, Time: ${task.time}",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
 }
