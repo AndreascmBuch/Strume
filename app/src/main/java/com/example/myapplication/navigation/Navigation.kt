@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
+import com.example.myapplication.Checklist
 import com.example.myapplication.habitscreen.HabitsScreen
 import com.example.myapplication.habitscreen.HabitsViewModel
 import com.example.myapplication.homescreen.AddTaskDialog
@@ -100,7 +101,7 @@ fun Navigation(homeViewModel: HomeViewModel) {
                 HabitsScreen(habitsViewModel)
             }
             composable(Screens.ListScreen.name) {
-                // Your list screen content
+                Checklist()
             }
         }
 
