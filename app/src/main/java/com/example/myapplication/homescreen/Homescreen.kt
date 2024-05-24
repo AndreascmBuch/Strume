@@ -173,7 +173,7 @@ fun HomeScreen(state: TaskState, onEvent: (TaskEvent) -> Unit) {
                 items(state.task) { task ->
                     Log.d("HomeScreen", "Displaying task: ${task.name}, ${task.date}, ${task.time}")
                     Text(
-                        text = task.date,
+                        text = task.date.toString(),
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,

@@ -15,11 +15,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myapplication.homescreen.TaskState
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Calendar() {
+fun Calendar(state:TaskState) {
     var selectedDate by remember { mutableIntStateOf(-1) }
     val weekdays = listOf("mon", "tue", "wed", "thu", "fri", "sat", "sun")
 
@@ -139,6 +140,7 @@ fun Calendar() {
     }
 
     if (showBottomSheet) {
+        val tasksForSelectedDate = state.task.filter { it.date.toInt() == selectedDate }
         ModalBottomSheet(
             onDismissRequest = {
                 showBottomSheet = false
@@ -152,8 +154,9 @@ fun Calendar() {
                     .padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                // TBD: Adjust content to align with added tasks on the home screen
-                Text("Date: $selectedDate/06, Lorem Ipsum", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                tasksForSelectedDate.forEach { task ->
+                    Text("Task: ${task.name}, Date: ${task.date}, Time: ${task.time}", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                }
             }
         }
     }
@@ -162,5 +165,4 @@ fun Calendar() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewCalendar() {
-    Calendar()
 }
