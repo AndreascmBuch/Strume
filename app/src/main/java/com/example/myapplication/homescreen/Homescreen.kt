@@ -133,7 +133,8 @@ fun AddTaskDialog(
 }
 
 @Composable
-fun HomeScreen(state: TaskState, onEvent: (TaskEvent) -> Unit) {
+fun HomeScreen(viewModel: HomeViewmodel) {
+    val state by viewModel.state.collectAsState()
     Log.d("HomeScreen", "Recomposing with ${state.task.size} tasks")
 
     LaunchedEffect(state.task) {
@@ -221,7 +222,7 @@ fun HomeScreen(state: TaskState, onEvent: (TaskEvent) -> Unit) {
         if (state.isAddingTask) {
             AddTaskDialog(
                 state = state,
-                onEvent = onEvent,
+                onEvent = {viewModel.onEvent(it)},
                 modifier = Modifier.align(Alignment.BottomCenter)
             )
         }

@@ -106,8 +106,7 @@ fun Navigation(state: TaskState, onEvent: (TaskEvent) -> Unit) {
                 Welcome(navController)
             }
             composable(Screens.HomeScreen.name) {
-                val homeState by homeViewModel.state.collectAsState()
-                HomeScreen(state = homeState, onEvent = onEvent)
+                HomeScreen(homeViewModel)
             }
             composable(Screens.CalendarScreen.name) {
                 val homeState by homeViewModel.state.collectAsState()
