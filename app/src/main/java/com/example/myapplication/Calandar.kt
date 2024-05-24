@@ -52,7 +52,6 @@ fun Calendar() {
             verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = Color(0x994E4853)) // semi-transparent overlay
                 .padding(bottom = 48.dp)
         ) {
             Column(
@@ -66,12 +65,11 @@ fun Calendar() {
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
-                    modifier = Modifier.padding(top = 42.dp, bottom = 4.dp)
+                    modifier = Modifier.padding(top = 84.dp, bottom = 2.dp)
                 )
                 Text(
                     text = "Add event forward in time",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = 22.sp,
                     color = Color.White,
                     modifier = Modifier.padding(bottom = 24.dp)
                 )
@@ -174,7 +172,7 @@ fun Calendar() {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(285.dp)  // Adjust height of the bottom sheet
+                        .height(270.dp)  // Adjust height of the bottom sheet
                         .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
