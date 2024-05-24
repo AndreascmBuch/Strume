@@ -164,9 +164,8 @@ fun Calendar(state:TaskState) {
 
         if (showBottomSheet) {
             val tasksForSelectedDate = state.task.filter {
-                val dayOfMonth = it.date.substring(0, 2)
-                dayOfMonth == selectedDate.toString().padStart(2, '0')
-            }
+                val dayOfMonth = "\\d+".toRegex().find(it.date)?.value?.toIntOrNull()
+                dayOfMonth == selectedDate}
             ModalBottomSheet(
                 onDismissRequest = {
                     showBottomSheet = false
