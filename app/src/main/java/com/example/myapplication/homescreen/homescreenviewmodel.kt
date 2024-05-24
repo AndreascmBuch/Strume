@@ -112,6 +112,7 @@ class HomeViewmodel(
             is TaskEvent.SortTask -> {
                 _sortType.value = event.sortType
             }
+
         }
     }
 }

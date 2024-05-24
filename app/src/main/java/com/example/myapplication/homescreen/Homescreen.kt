@@ -114,8 +114,6 @@ fun AddTaskDialog(
 
 @Composable
 fun HomeScreen(state: TaskState, onEvent: (TaskEvent) -> Unit) {
-
-
     Log.d("HomeScreen", "Recomposing with ${state.task.size} tasks")
 
     LaunchedEffect(state.task) {
