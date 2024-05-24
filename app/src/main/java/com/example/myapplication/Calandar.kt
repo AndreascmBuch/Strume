@@ -95,7 +95,8 @@ fun Calendar(state:TaskState) {
         }
 
         val daysInMonth = 30
-        val firstDayOffset = 5 // June 1st is a Saturday, so offset is 5 (0-based index for Saturday)
+        val firstDayOffset =
+            5 // June 1st is a Saturday, so offset is 5 (0-based index for Saturday)
         for (week in 0 until 6) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -140,7 +141,10 @@ fun Calendar(state:TaskState) {
     }
 
     if (showBottomSheet) {
-        val tasksForSelectedDate = state.task.filter { it.date.toInt() == selectedDate }
+        val tasksForSelectedDate = state.task.filter {
+            val dayOfMonth = it.date.substring(0, 2)
+            dayOfMonth == selectedDate.toString().padStart(2, '0')
+        }
         ModalBottomSheet(
             onDismissRequest = {
                 showBottomSheet = false
@@ -155,14 +159,13 @@ fun Calendar(state:TaskState) {
                 contentAlignment = Alignment.Center
             ) {
                 tasksForSelectedDate.forEach { task ->
-                    Text("Task: ${task.name}, Date: ${task.date}, Time: ${task.time}", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        "Task: ${task.name}, Date: ${task.date}, Time: ${task.time}",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewCalendar() {
 }
