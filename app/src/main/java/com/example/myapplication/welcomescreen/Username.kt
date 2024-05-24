@@ -1,3 +1,3 @@
 package com.example.myapplication.welcomescreen
 
-data class Username(val name:String)
+data class Username(val name: String)
