@@ -34,7 +34,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.ui.layout.ContentScale
 import com.example.myapplication.navigation.Navigation
 
-
 fun getDayOfMonthSuffix(day: Int): String {
     return when {
         day in 11..13 -> "th"
@@ -52,6 +51,39 @@ fun AddTaskDialog(
     onEvent: (TaskEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+
+    fun showDatePicker() {
+        val datePickerDialog = android.app.DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                val localDate = LocalDate.of(year, month + 1, dayOfMonth)
+                val dateString = localDate.format(
+                    DateTimeFormatter.ofPattern("EEEE, d'${getDayOfMonthSuffix(dayOfMonth)}' MMMM")
+                )
+                onEvent(TaskEvent.SetDate(dateString))
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+        datePickerDialog.show()
+    }
+
+    fun showTimePicker() {
+        TimePickerDialog(
+            context,
+            { _, hourOfDay, minute ->
+                val timeString = String.format("%02d:%02d", hourOfDay, minute)
+                onEvent(TaskEvent.SetTime(timeString))
+            },
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE),
+            true
+        ).show()
+    }
+
     AlertDialog(
         modifier = modifier,
         onDismissRequest = {
@@ -65,30 +97,18 @@ fun AddTaskDialog(
                 TextField(
                     value = state.name,
                     onValueChange = {
-                        onEvent(TaskEvent.SetName(it))
+                        onEvent(TaskEvent.SetName(it)) // Change: SetName event to update task name
                     },
                     placeholder = {
                         Text(text = "Task Name")
                     }
                 )
-                TextField(
-                    value = state.date,
-                    onValueChange = {
-                        onEvent(TaskEvent.SetDate(it))
-                    },
-                    placeholder = {
-                        Text(text = "Date")
-                    }
-                )
-                TextField(
-                    value = state.time,
-                    onValueChange = {
-                        onEvent(TaskEvent.SetTime(it))
-                    },
-                    placeholder = {
-                        Text(text = "Time")
-                    }
-                )
+                Button(onClick = { showDatePicker() }) { // Change: Button for showing date picker
+                    Text("Select Date: ${state.date}")
+                }
+                Button(onClick = { showTimePicker() }) { // Change: Button for showing time picker
+                    Text("Select Time: ${state.time}")
+                }
             }
         },
         confirmButton = {

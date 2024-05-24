@@ -62,42 +62,29 @@ class HomeViewmodel(
                 if(name.isBlank() || date.isBlank() || time.isBlank()) {
                     return
                 }
-                val task = Task(
-                    name = name,
-                    date = date,
-                    time = time
-                )
-                viewModelScope.launch{
+                val task = Task(name = name, date = date, time = time)
+                viewModelScope.launch {
                     dao.upsertTask(task)
                 }
-                _state.update {it.copy(
-                    isAddingTask = true,
-                    name = "",
-                    date = "",
-                    time = ""
-                )}
-            }
-            is TaskEvent.SetDate -> {
                 _state.update {
-                    it.copy(
-                        date = event.date
-                    )
+                    it.copy(isAddingTask = false, name = "", date = "", time = "") // Change: Set isAddingTask to false to close the dialog
+                }
+            }
+            is TaskEvent.SetDate -> { // Change: Added handling for SetDate event
+                _state.update {
+                    it.copy(date = event.date)
+                }
+            }
+
+            is TaskEvent.SetTime -> { // Change: Added handling for SetTime event
+                _state.update {
+                    it.copy(time = event.time)
                 }
             }
 
             is TaskEvent.SetName -> {
-                _state.update {
-                    it.copy(
-                        name = event.name
-                    )
-                }
-            }
-
-            is TaskEvent.SetTime -> {
-                _state.update {
-                    it.copy(
-                        time = event.time
-                    )
+                _state.update { // Implementing SetName event
+                    it.copy(name = event.name)
                 }
             }
 
@@ -113,6 +100,7 @@ class HomeViewmodel(
                 _sortType.value = event.sortType
             }
 
+            is TaskEvent.SetName -> TODO()
         }
     }
 }
