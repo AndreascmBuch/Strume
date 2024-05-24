@@ -78,7 +78,7 @@ fun Calendar() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+                    .padding(top = 8.dp, bottom = 16.dp)
             ) {
                 Text(
                     text = "june 2024",
