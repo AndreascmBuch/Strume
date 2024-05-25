@@ -4,9 +4,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,15 +27,16 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Calendar(state:TaskState) {
+fun Calendar(state: TaskState) {
     var selectedDate by remember { mutableIntStateOf(-1) }
     val weekdays = listOf("mon", "tue", "wed", "thu", "fri", "sat", "sun")
 
-    // Bottom sheet state functionality, https://developer.android.com/develop/ui/compose/components/bottom-sheets
+    // Bottom sheet state functionality
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
+    // Calendar layout
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -112,8 +116,7 @@ fun Calendar(state:TaskState) {
             }
 
             val daysInMonth = 30
-            val firstDayOffset =
-                5 // June 1st is a Saturday, so offset is 5 (0-based index for Saturday)
+            val firstDayOffset = 5 // June 1st is a Saturday, so offset is 5 (0-based index for Saturday)
             for (week in 0 until 6) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -124,6 +127,11 @@ fun Calendar(state:TaskState) {
                     for (day in 0 until 7) {
                         val date = week * 7 + day - firstDayOffset + 1
                         if (date in 1..daysInMonth) {
+                            // hasTask checks if any task value is present for a date
+                            val hasTask = state.task.any {
+                                val dayOfMonth = "\\d+".toRegex().find(it.date)?.value?.toIntOrNull()
+                                dayOfMonth == date
+                            }
                             Box(
                                 contentAlignment = Alignment.Center,
                                 modifier = Modifier
@@ -134,7 +142,8 @@ fun Calendar(state:TaskState) {
                                     .background(if (selectedDate == date) Color(0x8021B6E8) else Color.Transparent)
                                     .border(
                                         width = 2.dp,
-                                        color = if (selectedDate != date) Color(0x3B21B6E8) else Color.Transparent,
+                                        // If task value is present, then border, else transparent
+                                        color = if (hasTask) Color(0x9921B6E8) else Color.Transparent,
                                         shape = CircleShape
                                     )
                                     .clickable {
@@ -161,11 +170,12 @@ fun Calendar(state:TaskState) {
                 }
             }
         }
-
+        // Bottom Sheet functionality
         if (showBottomSheet) {
             val tasksForSelectedDate = state.task.filter {
                 val dayOfMonth = "\\d+".toRegex().find(it.date)?.value?.toIntOrNull()
-                dayOfMonth == selectedDate}
+                dayOfMonth == selectedDate
+            }
             ModalBottomSheet(
                 onDismissRequest = {
                     showBottomSheet = false
@@ -176,15 +186,48 @@ fun Calendar(state:TaskState) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(285.dp)  // Adjust height of the bottom sheet
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
+                        .padding(16.dp)
+                        .background(Color(0xFF4E4853), shape = RoundedCornerShape(16.dp))
                 ) {
-                    tasksForSelectedDate.forEach { task ->
-                        Text(
-                            "Task: ${task.name}, Date: ${task.date}, Time: ${task.time}",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                    // Layout of Bottom Sheet content for each date
+                    LazyColumn(
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        items(tasksForSelectedDate) { task ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(end = 16.dp)
+                                ) {
+                                    Text(
+                                        text = task.name,
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White,
+                                        modifier = Modifier.padding(start = 16.dp)
+                                    )
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.CenterVertically)
+                                        .padding(end = 24.dp)
+                                ) {
+                                    Text(
+                                        text = task.time,
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        color = Color.White
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
