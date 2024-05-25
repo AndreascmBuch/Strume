@@ -1,6 +1,7 @@
 package com.example.myapplication.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Favorite
@@ -37,7 +38,7 @@ val listOfNavItems = listOf(
     ),
     NavItem(
         title="List",
-        icon = Icons.Default.List,
+        icon = Icons.Default.Check,
         route = Screens.ListScreen.name
     ),
 )

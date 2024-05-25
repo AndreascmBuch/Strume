@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
-data class Habit(
+data class HabitData(
     val id: Int,
     val name: String,
     var initialFrequency: Frequency,
@@ -21,7 +21,7 @@ data class Habit(
         val now = LocalDateTime.now()
         val canIncrement = when (frequency) {
             Frequency.Daily -> lastUpdated == null || ChronoUnit.DAYS.between(lastUpdated, now) >= 1
-            Frequency.EverySecondDay -> lastUpdated == null || ChronoUnit.DAYS.between(lastUpdated, now) >= 2
+            Frequency.SecondDay -> lastUpdated == null || ChronoUnit.DAYS.between(lastUpdated, now) >= 2
             Frequency.Weekly -> lastUpdated == null || ChronoUnit.WEEKS.between(lastUpdated, now) >= 1
         }
 
@@ -42,7 +42,7 @@ data class Habit(
 
 sealed class Frequency {
     object Daily : Frequency()
-    object EverySecondDay : Frequency()
+    object SecondDay : Frequency()
     object Weekly : Frequency()
 }
 

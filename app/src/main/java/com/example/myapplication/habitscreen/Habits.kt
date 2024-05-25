@@ -35,15 +35,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Dialog
+import com.example.myapplication.R
 
 @Composable
 fun DropDownMenu(
@@ -83,9 +89,8 @@ fun DropDownMenu(
 
 
 @Composable
-fun HabitItemRow(item: Habit, viewModel: HabitsViewModel) {
+fun HabitItemRow(item: HabitData, viewModel: HabitsViewModel) {
     val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .padding(vertical = 8.dp)
@@ -94,70 +99,86 @@ fun HabitItemRow(item: Habit, viewModel: HabitsViewModel) {
             .fillMaxWidth()
             .clickable {
                 if (item.streak == 0) {
-                    // First increment
                     item.incrementStreak()
-                    Toast.makeText(
-                        context,
-                        "Habit started! Keep it up!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast
+                        .makeText(
+                            context,
+                            "Habit started! Keep it up!",
+                            Toast.LENGTH_SHORT
+                        )
+                        .show()
                 } else {
-                    // Subsequent increments
                     val incremented = item.incrementStreak()
                     if (!incremented) {
-                        Toast.makeText(
-                            context,
-                            "You have already tapped. Please wait for the required time period.",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast
+                            .makeText(
+                                context,
+                                "You have already tapped. Please wait for the required time period.",
+                                Toast.LENGTH_SHORT
+                            )
+                            .show()
                     } else {
-                        Toast.makeText(
-                            context,
-                            "Streak improved!",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast
+                            .makeText(
+                                context,
+                                "Streak improved!",
+                                Toast.LENGTH_SHORT
+                            )
+                            .show()
                     }
                 }
             }
-            .padding(16.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
-            Text(
-                text = item.name,
-                fontSize = 20.sp,
-                color = Color.White,
-                modifier = Modifier.weight(1f).padding(start = 8.dp)
-            )
-            Text(
-                text = "${item.streak}",
-                fontSize = 50.sp,
-                color = Color.White,
-                modifier = Modifier.align(Alignment.CenterVertically).padding(8.dp)
-            )
-            Icon(
-                imageVector = Icons.Default.Favorite,
-                contentDescription = null,
-                tint = Color.Red,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .size(50.dp)
-                    .padding(8.dp)
-            )
-        }
-        DropDownMenu(
-            frequencies = listOf(
-                Frequency.Daily,
-                Frequency.EverySecondDay,
-                Frequency.Weekly
-            ),
-            selectedFrequency = item.frequency,
-            onFrequencySelected = { frequency ->
-                viewModel.updateHabitFrequency(item.id, frequency)
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = item.name,
+                        fontSize = 20.sp,
+                        color = Color.White,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                    DropDownMenu(
+                        frequencies = listOf(
+                            Frequency.Daily,
+                            Frequency.SecondDay,
+                            Frequency.Weekly
+                        ),
+                        selectedFrequency = item.frequency,
+                        onFrequencySelected = { frequency ->
+                            viewModel.updateHabitFrequency(item.id, frequency)
+                        }
+                    )
+                }
+                Text(
+                    text = "${item.streak}",
+                    fontSize = 40.sp,
+                    color = Color.White,
+                    modifier = Modifier
+                        .padding(end = 5.dp, top = 1.dp)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .wrapContentSize(Alignment.Center)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = null,
+                        tint = Color.Red,
+                        modifier = Modifier.size(50.dp)
+                    )
+                }
             }
-        )
+        }
     }
 }
 
@@ -197,13 +218,13 @@ fun AddHabitDialog(
                     DropDownMenu(
                         frequencies = listOf(
                             Frequency.Daily,
-                            Frequency.EverySecondDay,
+                            Frequency.SecondDay,
                             Frequency.Weekly
                         ),
                         selectedFrequency = selectedFrequency,
                         onFrequencySelected = { frequency ->
                             selectedFrequency = frequency
-                        }
+                        },
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Row(
@@ -229,50 +250,61 @@ fun AddHabitDialog(
 }
 
 
-
-
 @Composable
 fun HabitsScreen(viewModel: HabitsViewModel = viewModel()) {
     val showDialog by viewModel.showAddHabitDialog
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color(0xFF4E4853))
-            .padding(start = 16.dp, end = 16.dp, top = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Text(text = "Habits", color = Color.White, fontSize = 36.sp)
-        Text(
-            text = "Keep up your good Habits for a healthy life",
-            color = Color.White,
-            fontSize = 20.sp
+    Box( modifier = Modifier
+        .fillMaxSize()
+        .background(color = Color(0xFF4E4853))) {
+        Image(
+            painter = painterResource(id = R.drawable.homescreenshapes),
+            contentDescription = "Shape",
+            contentScale = ContentScale.Crop,  // Ensure the image covers the top area
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
         )
-        LazyColumn(
-            contentPadding = PaddingValues(vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 16.dp, end = 16.dp, top = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
-            items(items = viewModel.habits) { item ->
-                HabitItemRow(
-                    item = item,
-                    viewModel = viewModel
-                )
+
+            Text(text = "Habits", color = Color.White, fontSize = 36.sp)
+            Text(
+                text = "Keep up your good Habits for a healthy life",
+                color = Color.White,
+                fontSize = 20.sp
+            )
+            Spacer(modifier = Modifier.height(150.dp))
+            LazyColumn(
+                contentPadding = PaddingValues(vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+
+                ) {
+                items(items = viewModel.habits) { item ->
+                    HabitItemRow(
+                        item = item,
+                        viewModel = viewModel
+                    )
+                }
             }
         }
+        AddHabitDialog(
+            showDialog = showDialog,
+            onDismissRequest = { viewModel.hideAddHabitDialog() },
+            onHabitAdd = { habitName, frequency ->
+                viewModel.addHabit(
+                    name = habitName,
+                    frequency = frequency,
+                    streak = 0
+                )
+                viewModel.hideAddHabitDialog()
+            }
+        )
     }
-    AddHabitDialog(
-        showDialog = showDialog,
-        onDismissRequest = { viewModel.hideAddHabitDialog() },
-        onHabitAdd = { habitName, frequency ->
-            viewModel.addHabit(
-                name = habitName,
-                frequency = frequency,
-                streak = 0
-            )
-            viewModel.hideAddHabitDialog()
-        }
-    )
 }
 
 

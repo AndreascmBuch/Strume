@@ -6,12 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 
 class HabitsViewModel : ViewModel() {
-    val habits = mutableStateListOf<Habit>()
+    val habits = mutableStateListOf<HabitData>()
     private val _showAddHabitDialog = mutableStateOf(false)
     val showAddHabitDialog: State<Boolean> get() = _showAddHabitDialog
 
     fun addHabit(name: String, frequency: Frequency, streak: Int) {
-        val habit = Habit(
+        val habit = HabitData(
             id = habits.size + 1,
             name = name,
             initialFrequency = frequency,
