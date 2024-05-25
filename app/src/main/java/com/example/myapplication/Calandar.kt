@@ -4,6 +4,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -161,11 +162,12 @@ fun Calendar(state:TaskState) {
                 }
             }
         }
-
+        // Bottom Sheet functionality
         if (showBottomSheet) {
             val tasksForSelectedDate = state.task.filter {
                 val dayOfMonth = "\\d+".toRegex().find(it.date)?.value?.toIntOrNull()
-                dayOfMonth == selectedDate}
+                dayOfMonth == selectedDate
+            }
             ModalBottomSheet(
                 onDismissRequest = {
                     showBottomSheet = false
@@ -176,15 +178,48 @@ fun Calendar(state:TaskState) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(285.dp)  // Adjust height of the bottom sheet
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
+                        .padding(16.dp)
+                        .background(Color(0xFF4E4853), shape = RoundedCornerShape(16.dp))
                 ) {
-                    tasksForSelectedDate.forEach { task ->
-                        Text(
-                            "Task: ${task.name}, Date: ${task.date}, Time: ${task.time}",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                    // Bottom Sheet content for each date
+                    Column(
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        tasksForSelectedDate.forEach { task ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(end = 16.dp)
+                                ) {
+                                    Text(
+                                        text = task.name,
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White,
+                                        modifier = Modifier.padding(start = 16.dp)
+                                    )
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.CenterVertically)
+                                        .padding(end = 24.dp)
+                                ) {
+                                    Text(
+                                        text = task.time,
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        color = Color.White
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
