@@ -6,5 +6,6 @@ data class TaskState(
     val date: String = "",
     val time: String = "",
     val isAddingTask: Boolean=false,
-    val sortType: SortType = SortType.Name
+    val sortType: SortType = SortType.Name,
+    val editingTaskId: Int? = null
 )

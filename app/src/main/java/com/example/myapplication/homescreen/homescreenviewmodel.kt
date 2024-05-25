@@ -15,10 +15,6 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -46,61 +42,51 @@ class HomeViewmodel(
         when (event) {
             is TaskEvent.DeleteTask -> {
                 viewModelScope.launch { dao.deleteTask(event.task) }
+                _state.update { it.copy(isAddingTask = false, name = "", date = "", time = "", editingTaskId = null) }
             }
-
-           is TaskEvent.HideDialog -> {
-                _state.update {
-                    it.copy(
-                        isAddingTask = false
-                    )
-                }
+            is TaskEvent.HideDialog -> {
+                _state.update { it.copy(isAddingTask = false) }
             }
             is TaskEvent.SaveTask -> {
                 val name = state.value.name
                 val date = state.value.date
                 val time = state.value.time
-                if(name.isBlank() || date.isBlank() || time.isBlank()) {
+                if (name.isBlank() || date.isBlank() || time.isBlank()) {
                     return
                 }
-                val task = Task(name = name, date = date, time = time)
+                val task = Task(name = name, date = date, time = time, id = state.value.editingTaskId ?: 0) // Added logic to handle editing tasks
                 viewModelScope.launch {
                     dao.upsertTask(task)
                 }
-                _state.update {
-                    it.copy(isAddingTask = false, name = "", date = "", time = "") // Change: Set isAddingTask to false to close the dialog
-                }
+                _state.update { it.copy(isAddingTask = false, name = "", date = "", time = "", editingTaskId = null) } // Reset editingTaskId
             }
-            is TaskEvent.SetDate -> { // Change: Added handling for SetDate event
-                _state.update {
-                    it.copy(date = event.date)
-                }
+            is TaskEvent.SetDate -> {
+                _state.update { it.copy(date = event.date) }
             }
-
-            is TaskEvent.SetTime -> { // Change: Added handling for SetTime event
-                _state.update {
-                    it.copy(time = event.time)
-                }
+            is TaskEvent.SetTime -> {
+                _state.update { it.copy(time = event.time) }
             }
-
             is TaskEvent.SetName -> {
-                _state.update { // Implementing SetName event
-                    it.copy(name = event.name)
-                }
+                _state.update { it.copy(name = event.name) }
             }
-
             is TaskEvent.ShowDialog -> {
-                _state.update {
-                    it.copy(
-                        isAddingTask = true
-                    )
-                }
+                _state.update { it.copy(isAddingTask = true, editingTaskId = null) } // Reset editingTaskId when showing dialog for adding
             }
-
             is TaskEvent.SortTask -> {
                 _sortType.value = event.sortType
             }
-
-            is TaskEvent.SetName -> TODO()
+            is TaskEvent.EditTask -> { // New event to handle task editing
+                val task = event.task
+                _state.update {
+                    it.copy(
+                        isAddingTask = true,
+                        name = task.name,
+                        date = task.date,
+                        time = task.time,
+                        editingTaskId = task.id // Set editingTaskId
+                    )
+                }
+            }
         }
     }
 }
