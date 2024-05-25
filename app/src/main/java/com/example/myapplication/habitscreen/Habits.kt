@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import android.widget.Toast
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -67,10 +68,12 @@ fun DropDownMenu(
         ) {
             frequencies.forEach { frequency ->
                 DropdownMenuItem(
-                    text = { Text(text = frequency::class.simpleName ?: "") },
                     onClick = {
                         onFrequencySelected(frequency)
                         isExpanded = false
+                    },
+                    text = {
+                        Text(text = frequency::class.simpleName ?: "")
                     }
                 )
             }
@@ -78,9 +81,11 @@ fun DropDownMenu(
     }
 }
 
+
 @Composable
 fun HabitItemRow(item: Habit, viewModel: HabitsViewModel) {
     val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .padding(vertical = 8.dp)
@@ -88,31 +93,49 @@ fun HabitItemRow(item: Habit, viewModel: HabitsViewModel) {
             .background(color = Color.Gray)
             .fillMaxWidth()
             .clickable {
-                val incremented = item.incrementStreak()
-                if (!incremented) {
+                if (item.streak == 0) {
+                    // First increment
+                    item.incrementStreak()
                     Toast.makeText(
                         context,
-                        "You have already tapped. Please wait for the required time period.",
+                        "Habit started! Keep it up!",
                         Toast.LENGTH_SHORT
                     ).show()
+                } else {
+                    // Subsequent increments
+                    val incremented = item.incrementStreak()
+                    if (!incremented) {
+                        Toast.makeText(
+                            context,
+                            "You have already tapped. Please wait for the required time period.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Streak improved!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
+            .padding(16.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 text = item.name,
                 fontSize = 20.sp,
                 color = Color.White,
-                modifier = Modifier.weight(1f).padding(start = 18.dp)
+                modifier = Modifier.weight(1f).padding(start = 8.dp)
             )
             Text(
                 text = "${item.streak}",
                 fontSize = 50.sp,
                 color = Color.White,
-                modifier = Modifier.align(Alignment.CenterVertically).padding(0.dp)
+                modifier = Modifier.align(Alignment.CenterVertically).padding(8.dp)
             )
             Icon(
                 imageVector = Icons.Default.Favorite,
@@ -121,7 +144,7 @@ fun HabitItemRow(item: Habit, viewModel: HabitsViewModel) {
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .size(50.dp)
-                    .padding(0.dp)
+                    .padding(8.dp)
             )
         }
         DropDownMenu(
@@ -138,17 +161,20 @@ fun HabitItemRow(item: Habit, viewModel: HabitsViewModel) {
     }
 }
 
+
+
 @Composable
 fun AddHabitDialog(
     showDialog: Boolean,
     onDismissRequest: () -> Unit,
-    onHabitAdd: (String) -> Unit
+    onHabitAdd: (String, Frequency) -> Unit
 ) {
     if (showDialog) {
         Dialog(onDismissRequest = onDismissRequest) {
             Surface(
                 shape = RoundedCornerShape(16.dp),
-                color = MaterialTheme.colorScheme.surface
+                color = MaterialTheme.colorScheme.surface,
+                modifier = Modifier.padding(16.dp)
             ) {
                 Column(
                     modifier = Modifier
@@ -157,6 +183,7 @@ fun AddHabitDialog(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     val habitNameState = remember { mutableStateOf("") }
+                    var selectedFrequency by remember { mutableStateOf<Frequency>(Frequency.Daily) }
 
                     Text(text = "Add New Habit", style = MaterialTheme.typography.headlineLarge)
                     Spacer(modifier = Modifier.height(8.dp))
@@ -165,6 +192,18 @@ fun AddHabitDialog(
                         onValueChange = { habitNameState.value = it },
                         label = { Text("Habit Name") },
                         modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    DropDownMenu(
+                        frequencies = listOf(
+                            Frequency.Daily,
+                            Frequency.EverySecondDay,
+                            Frequency.Weekly
+                        ),
+                        selectedFrequency = selectedFrequency,
+                        onFrequencySelected = { frequency ->
+                            selectedFrequency = frequency
+                        }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Row(
@@ -176,7 +215,7 @@ fun AddHabitDialog(
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Button(onClick = {
-                            onHabitAdd(habitNameState.value)
+                            onHabitAdd(habitNameState.value, selectedFrequency)
                             habitNameState.value = ""
                             onDismissRequest()
                         }) {
@@ -188,6 +227,9 @@ fun AddHabitDialog(
         }
     }
 }
+
+
+
 
 @Composable
 fun HabitsScreen(viewModel: HabitsViewModel = viewModel()) {
@@ -201,13 +243,16 @@ fun HabitsScreen(viewModel: HabitsViewModel = viewModel()) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Text(text = "Habits", color = Color.White,fontSize = 36.sp)
+        Text(text = "Habits", color = Color.White, fontSize = 36.sp)
         Text(
             text = "Keep up your good Habits for a healthy life",
             color = Color.White,
             fontSize = 20.sp
         )
-        LazyColumn {
+        LazyColumn(
+            contentPadding = PaddingValues(vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             items(items = viewModel.habits) { item ->
                 HabitItemRow(
                     item = item,
@@ -219,16 +264,18 @@ fun HabitsScreen(viewModel: HabitsViewModel = viewModel()) {
     AddHabitDialog(
         showDialog = showDialog,
         onDismissRequest = { viewModel.hideAddHabitDialog() },
-        onHabitAdd = { habitName ->
+        onHabitAdd = { habitName, frequency ->
             viewModel.addHabit(
                 name = habitName,
-                frequency = Frequency.Daily,
+                frequency = frequency,
                 streak = 0
             )
             viewModel.hideAddHabitDialog()
         }
     )
 }
+
+
 
 
 

@@ -1,5 +1,6 @@
 package com.example.myapplication.habitscreen
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -7,7 +8,7 @@ import androidx.lifecycle.ViewModel
 class HabitsViewModel : ViewModel() {
     val habits = mutableStateListOf<Habit>()
     private val _showAddHabitDialog = mutableStateOf(false)
-    val showAddHabitDialog = _showAddHabitDialog
+    val showAddHabitDialog: State<Boolean> get() = _showAddHabitDialog
 
     fun addHabit(name: String, frequency: Frequency, streak: Int) {
         val habit = Habit(
@@ -21,9 +22,9 @@ class HabitsViewModel : ViewModel() {
 
     fun updateHabitFrequency(id: Int, frequency: Frequency) {
         val habit = habits.find { it.id == id }
-        if (habit != null) {
-            habit.frequency = frequency
-            habit.resetStreak()
+        habit?.let {
+            it.frequency = frequency
+            it.resetStreak()
         }
     }
 
@@ -35,3 +36,4 @@ class HabitsViewModel : ViewModel() {
         _showAddHabitDialog.value = false
     }
 }
+

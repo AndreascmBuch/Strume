@@ -12,7 +12,7 @@ data class Habit(
     val name: String,
     var initialFrequency: Frequency,
     var initialStreak: Int,
-    var lastUpdated: LocalDateTime = LocalDateTime.now()
+    var lastUpdated: LocalDateTime? = null
 ) {
     var frequency: Frequency by mutableStateOf(initialFrequency)
     var streak: Int by mutableIntStateOf(initialStreak)
@@ -20,9 +20,9 @@ data class Habit(
     fun incrementStreak(): Boolean {
         val now = LocalDateTime.now()
         val canIncrement = when (frequency) {
-            Frequency.Daily -> ChronoUnit.DAYS.between(lastUpdated, now) >= 1
-            Frequency.EverySecondDay -> ChronoUnit.DAYS.between(lastUpdated, now) >= 2
-            Frequency.Weekly -> ChronoUnit.WEEKS.between(lastUpdated, now) >= 1
+            Frequency.Daily -> lastUpdated == null || ChronoUnit.DAYS.between(lastUpdated, now) >= 1
+            Frequency.EverySecondDay -> lastUpdated == null || ChronoUnit.DAYS.between(lastUpdated, now) >= 2
+            Frequency.Weekly -> lastUpdated == null || ChronoUnit.WEEKS.between(lastUpdated, now) >= 1
         }
 
         return if (canIncrement) {
@@ -36,12 +36,13 @@ data class Habit(
 
     fun resetStreak() {
         streak = 0
+        lastUpdated = null
     }
 }
 
-
 sealed class Frequency {
-    data object Daily : Frequency()
-    data object EverySecondDay : Frequency()
-    data object Weekly : Frequency()
+    object Daily : Frequency()
+    object EverySecondDay : Frequency()
+    object Weekly : Frequency()
 }
+
