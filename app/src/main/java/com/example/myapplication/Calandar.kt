@@ -8,6 +8,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -182,11 +184,11 @@ fun Calendar(state:TaskState) {
                         .background(Color(0xFF4E4853), shape = RoundedCornerShape(16.dp))
                 ) {
                     // Bottom Sheet content for each date
-                    Column(
+                    LazyColumn(  // Made the content scrollable
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.Start
                     ) {
-                        tasksForSelectedDate.forEach { task ->
+                        items(tasksForSelectedDate) { task ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -196,20 +198,20 @@ fun Calendar(state:TaskState) {
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .padding(end = 16.dp)
+                                        .padding(end = 16.dp)  // Add more padding to the right of task name
                                 ) {
                                     Text(
                                         text = task.name,
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = Color.White,
-                                        modifier = Modifier.padding(start = 16.dp)
+                                        modifier = Modifier.padding(start = 16.dp)  // More padding to the left of task name
                                     )
                                 }
                                 Box(
                                     modifier = Modifier
                                         .align(Alignment.CenterVertically)
-                                        .padding(end = 24.dp)
+                                        .padding(end = 24.dp)  // Add padding to move text more to the left
                                 ) {
                                     Text(
                                         text = task.time,
