@@ -38,7 +38,7 @@ val listOfNavItems = listOf(
     ),
     NavItem(
         title="List",
-        icon = Icons.Default.Check,
+        icon = Icons.Default.List,
         route = Screens.ListScreen.name
     ),
 )

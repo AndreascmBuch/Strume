@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -131,7 +132,7 @@ fun Navigation(state: TaskState, onEvent: (TaskEvent) -> Unit) {
             Screens.HomeScreen.name -> Icons.Default.Add
             Screens.CalendarScreen.name -> Icons.Default.Add
             Screens.HabitsScreen.name -> Icons.Default.Add
-            Screens.ListScreen.name -> Icons.Default.Settings
+            Screens.ListScreen.name -> Icons.Default.Check
             else -> null
         }
         if (fabIcon != null) {
