@@ -141,6 +141,8 @@ fun HomeScreen(viewModel: HomeViewmodel) {
         Log.d("HomeScreen", "Tasks have changed. Size: ${state.task.size}")
     }
 
+    val tasksGroupedByDate = state.task.groupBy { it.date }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -191,40 +193,63 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                     .fillMaxWidth()
                     .padding(24.dp, 24.dp, 24.dp, 0.dp)
             ) {
-                items(state.task) { task ->
-                    Log.d("HomeScreen", "Displaying task: ${task.name}, ${task.date}, ${task.time}")
-                    Text(
-                        text = task.date.toString(),
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier
-                            .padding(vertical = 4.dp)
-                            .padding(top = 18.dp),
-                    )
-                    Text(
-                        text = "${task.name}, ${task.time}",
-                        color = Color.White,
-                        fontSize = 15.sp,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(Color(0xFF737483))
-                            .padding(14.dp)
-                            .fillMaxWidth()
-                            .clickable { /*homeViewModel.editTask(task.id)*/ }
-                    )
-                    Log.d("HomeScreen", "Displaying task: ${task.name}")
+                // Iterate over the grouped tasks
+                tasksGroupedByDate.forEach { (date, tasks) ->
+                    item {
+                        // Display the date once for each group
+                        Text(
+                            text = date.toString(),
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            modifier = Modifier
+                                .padding(vertical = 4.dp)
+                                .padding(top = 18.dp),
+                        )
+                    }
+                    items(state.task) { task ->
+                        Log.d(
+                            "HomeScreen",
+                            "Displaying task: ${task.name}, ${task.date}, ${task.time}"
+                        )
+                        Text(
+                            text = task.date.toString(),
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            modifier = Modifier
+                                .padding(vertical = 4.dp)
+                                .padding(top = 18.dp),
+                        )
+                        Text(
+                            text = "${task.name}, ${task.time}",
+                            color = Color.White,
+                            fontSize = 15.sp,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(Color(0xFF737483))
+                                .padding(14.dp)
+                                .fillMaxWidth()
+                                .clickable { /*homeViewModel.editTask(task.id)*/ }
+                        )
+                        Log.d("HomeScreen", "Displaying task: ${task.name}")
+                    }
+                    Log.d("HomeScreen", "LazyColumn recomposing with ${state.task.size} tasks")
                 }
-                Log.d("HomeScreen", "LazyColumn recomposing with ${state.task.size} tasks")
             }
-        }
-        // AddTaskDialog is conditionally displayed based on state.isAddingTask
-        if (state.isAddingTask) {
-            AddTaskDialog(
-                state = state,
-                onEvent = {viewModel.onEvent(it)},
-                modifier = Modifier.align(Alignment.BottomCenter)
-            )
+            // AddTaskDialog is conditionally displayed based on state.isAddingTask
+            // Wrapping the AddTaskDialog in a Box to align it
+            if (state.isAddingTask) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    AddTaskDialog(
+                        state = state,
+                        onEvent = { viewModel.onEvent(it) }
+                    )
+                }
+            }
         }
     }
 }
