@@ -4,11 +4,7 @@ import android.app.TimePickerDialog
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,11 +24,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.ui.layout.ContentScale
-import com.example.myapplication.navigation.Navigation
 
 fun getDayOfMonthSuffix(day: Int): String {
     return when {
@@ -43,7 +35,6 @@ fun getDayOfMonthSuffix(day: Int): String {
         else -> "th"
     }
 }
-
 
 @Composable
 fun AddTaskDialog(
@@ -89,7 +80,7 @@ fun AddTaskDialog(
         onDismissRequest = {
             onEvent(TaskEvent.HideDialog)
         },
-        title = { Text(text = "Add Task") },
+        title = { Text(text = if (state.editingTaskId == null) "Add Task" else "Edit Task") },
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -97,41 +88,55 @@ fun AddTaskDialog(
                 TextField(
                     value = state.name,
                     onValueChange = {
-                        onEvent(TaskEvent.SetName(it)) // Change: SetName event to update task name
+                        onEvent(TaskEvent.SetName(it))
                     },
                     placeholder = {
                         Text(text = "Task Name")
                     }
                 )
-                Button(onClick = { showDatePicker() }) { // Change: Button for showing date picker
+                Button(onClick = { showDatePicker() }) {
                     Text("Select Date: ${state.date}")
                 }
-                Button(onClick = { showTimePicker() }) { // Change: Button for showing time picker
+                Button(onClick = { showTimePicker() }) {
                     Text("Select Time: ${state.time}")
                 }
             }
         },
         confirmButton = {
-            Button(
-                onClick = {
-                    onEvent(TaskEvent.SaveTask)
-                }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(all = 8.dp)
             ) {
-                Text(text = "Save")
+                Button(
+                    onClick = { onEvent(TaskEvent.HideDialog) }
+                ) {
+                    Text(text = "Cancel")
+                }
+                Button(
+                    onClick = { onEvent(TaskEvent.SaveTask) }
+                ) {
+                    Text(text = if (state.editingTaskId == null) "Save" else "Update")
+                }
+                if (state.editingTaskId != null) { // Only show "Delete" button if editing a task
+                    Button(
+                        onClick = {
+                            val task = state.task.find { it.id == state.editingTaskId }
+                            if (task != null) {
+                                onEvent(TaskEvent.DeleteTask(task))
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                    ) {
+                        Text(text = "Delete")
+                    }
+                }
             }
         },
         dismissButton = {
-            Button(
-                onClick = {
-                    onEvent(TaskEvent.HideDialog)
-                }
-            ) {
-                Text(text = "Cancel")
-            }
+            // This can be left empty if you don't want an additional dismiss button
         }
     )
 }
-
 @Composable
 fun HomeScreen(viewModel: HomeViewmodel) {
     val state by viewModel.state.collectAsState()
@@ -152,7 +157,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
         Image(
             painter = painterResource(id = R.drawable.homescreenshapes),
             contentDescription = "Shape",
-            contentScale = ContentScale.Crop,  // Ensure the image covers the top area
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)
@@ -195,10 +200,10 @@ fun HomeScreen(viewModel: HomeViewmodel) {
             ) {
                 // Iterate over the grouped tasks
                 tasksGroupedByDate.forEach { (date, tasks) ->
+                    // Display the date once for each group
                     item {
-                        // Display the date once for each group
                         Text(
-                            text = date.toString(),
+                            text = date,
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp,
@@ -207,20 +212,8 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                                 .padding(top = 18.dp),
                         )
                     }
-                    items(state.task) { task ->
-                        Log.d(
-                            "HomeScreen",
-                            "Displaying task: ${task.name}, ${task.date}, ${task.time}"
-                        )
-                        Text(
-                            text = task.date.toString(),
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            modifier = Modifier
-                                .padding(vertical = 4.dp)
-                                .padding(top = 18.dp),
-                        )
+                    // Display each task under the current date
+                    items(tasks) { task ->
                         Text(
                             text = "${task.name}, ${task.time}",
                             color = Color.White,
@@ -230,7 +223,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                                 .background(Color(0xFF737483))
                                 .padding(14.dp)
                                 .fillMaxWidth()
-                                .clickable { /*homeViewModel.editTask(task.id)*/ }
+                                .clickable { viewModel.onEvent(TaskEvent.EditTask(task)) }
                         )
                         Log.d("HomeScreen", "Displaying task: ${task.name}")
                     }
@@ -238,7 +231,6 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                 }
             }
             // AddTaskDialog is conditionally displayed based on state.isAddingTask
-            // Wrapping the AddTaskDialog in a Box to align it
             if (state.isAddingTask) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -253,5 +245,3 @@ fun HomeScreen(viewModel: HomeViewmodel) {
         }
     }
 }
-
-
