@@ -26,6 +26,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.layout.ContentScale
+import java.time.LocalTime
 
 fun getDayOfMonthSuffix(day: Int): String {
     return when {
@@ -52,7 +53,7 @@ fun AddTaskDialog(
             { _, year, month, dayOfMonth ->
                 val localDate = LocalDate.of(year, month + 1, dayOfMonth)
                 val dateString = localDate.format(
-                    DateTimeFormatter.ofPattern("EEEE, d'${getDayOfMonthSuffix(dayOfMonth)}' MMMM")
+                    DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy")
                 )
                 onEvent(TaskEvent.SetDate(dateString))
             },
@@ -175,7 +176,16 @@ fun HomeScreen(viewModel: HomeViewmodel) {
         Log.d("HomeScreen", "Tasks have changed. Size: ${state.task.size}")
     }
 
-    val tasksGroupedByDate = state.task.groupBy { it.date }
+    // Added date formatter for parsing the date strings
+    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy")
+    // Sort tasks by date and time
+    val sortedTasks = state.task.sortedWith(compareBy(
+        // Parsing the date and time strings to LocalDate and LocalTime
+        { LocalDate.parse(it.date.replace(Regex("(st|nd|rd|th)"), ""), dateFormatter) },
+        { LocalTime.parse(it.time) }
+    ))
+
+    val tasksGroupedByDate = sortedTasks.groupBy { it.date }
 
     Box(
         modifier = Modifier
