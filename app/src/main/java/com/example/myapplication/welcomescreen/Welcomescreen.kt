@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.myapplication.R
@@ -51,14 +52,22 @@ fun Welcome(navController: NavController) {
                 contentDescription = "Strume logo",
                 alpha = 1f
             )
-            Text(text = "Welcome to Strume", color = Color.White)
+            Text(
+                text = "Welcome to Strume",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                modifier = Modifier
+                    .padding(bottom = 12.dp)
+            )
             TextField(
                 value = username,
                 onValueChange = { newUsername -> setValue(newUsername) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                textStyle = TextStyle(color = Color.Black)
+                    .padding(vertical = 16.dp),
+                textStyle = TextStyle(color = Color.Black),
+                placeholder = { Text("Please enter your name") }
             )
             // Navigation and take username to homepage
             Button(
@@ -79,7 +88,8 @@ fun Welcome(navController: NavController) {
                 Text(
                     text = "Continue to app",
                     color = Color.White,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
                 )
             }
         }

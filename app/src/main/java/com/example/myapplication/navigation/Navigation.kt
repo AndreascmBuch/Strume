@@ -3,9 +3,11 @@ package com.example.myapplication.navigation
 import Calendar
 import androidx.annotation.OptIn
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -157,7 +159,15 @@ fun Navigation(state: TaskState, onEvent: (TaskEvent) -> Unit) {
                     }
                 },
                 shape = RoundedCornerShape(30.dp),
-                containerColor = Color(0xFF1756D5),
+                containerColor = Color(0xFF3b77f0),
+                contentColor = Color.White,
+                modifier = Modifier
+                    .padding(4.dp)
+                    .border(
+                        width = 2.dp,
+                        color = Color(0xFF002163),
+                        shape = CircleShape
+                    )
             ) {
                 Icon(fabIcon, contentDescription = "Fab")
             }

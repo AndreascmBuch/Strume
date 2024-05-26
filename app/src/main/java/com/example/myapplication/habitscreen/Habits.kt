@@ -297,19 +297,19 @@ fun HabitsScreen(viewModel: HabitsViewModel = viewModel()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 16.dp, end = 16.dp, top = 60.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 75.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
             Text(
                 text = "Habits",
                 color = Color.White,
-                fontSize = 36.sp,
+                fontSize = 32.sp,
                 fontWeight = FontWeight.Bold)
             Text(
                 text = "Keep up your good habits for a healthy life",
                 color = Color.White,
-                fontSize = 22.sp
+                fontSize = 20.sp
             )
             Spacer(modifier = Modifier.height(150.dp))
             LazyColumn(

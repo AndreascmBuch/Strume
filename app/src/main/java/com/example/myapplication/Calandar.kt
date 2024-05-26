@@ -143,7 +143,7 @@ fun Calendar(state: TaskState) {
                                     .border(
                                         width = 2.dp,
                                         // If task value is present, then border, else transparent
-                                        color = if (hasTask) Color(0xB73B77F0) else Color.Transparent,
+                                        color = if (hasTask) Color(0xFF3B77F0) else Color.Transparent,
                                         shape = CircleShape
                                     )
                                     .clickable {
@@ -185,7 +185,7 @@ fun Calendar(state: TaskState) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(285.dp)  // Adjust height of the bottom sheet
+                        .height(275.dp)  // Adjust height of the bottom sheet
                         .padding(16.dp)
                         .background(Color(0xFF4E4853), shape = RoundedCornerShape(16.dp))
                 ) {

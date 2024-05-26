@@ -107,17 +107,17 @@ fun AddTaskDialog(
                 ) {
                     Button(
                         onClick = { showDatePicker() },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3b77f0)), // Updated button color
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xE63B77F0)),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text(text = if (state.editingTaskId == null) "Select Date" else "Edit Date") // Updated text for editing
+                        Text(text = if (state.editingTaskId == null) "Select Date" else "Edit Date")
                     }
                     Button(
                         onClick = { showTimePicker() },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3b77f0)), // Updated button color
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xE63B77F0)),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text(text = if (state.editingTaskId == null) "Select Time" else "Edit Time") // Updated text for editing
+                        Text(text = if (state.editingTaskId == null) "Select Time" else "Edit Time")
                     }
                 }
                 Row(
@@ -126,17 +126,17 @@ fun AddTaskDialog(
                 ) {
                     Button(
                         onClick = { onEvent(TaskEvent.HideDialog) },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3b77f0)), // Updated button color
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xE63B77F0)),
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(text = "Cancel")
                     }
                     Button(
                         onClick = { onEvent(TaskEvent.SaveTask) },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3b77f0)), // Updated button color
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xE63B77F0)),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text(text = if (state.editingTaskId == null) "Save" else "Update")
+                        Text(text = if (state.editingTaskId == null) "Save" else "Save")
                     }
                 }
                 if (state.editingTaskId != null) { // Only show "Delete" button if editing a task
@@ -147,10 +147,12 @@ fun AddTaskDialog(
                                 onEvent(TaskEvent.DeleteTask(task))
                             }
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA32920)),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xE6A32920)),
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .align(Alignment.CenterHorizontally)
                             .padding(top = 8.dp)
+                            .heightIn(min = 40.dp)
+                            .fillMaxWidth(0.6f)
                     ) {
                         Text(text = "Delete")
                     }
