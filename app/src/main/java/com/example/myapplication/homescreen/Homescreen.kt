@@ -24,6 +24,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.layout.ContentScale
 
 fun getDayOfMonthSuffix(day: Int): String {
@@ -243,35 +244,55 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                     // Display each task under the current date
                     itemsIndexed(tasks) { index, task ->
                         // Calculate dynamic bottom padding for tasks on the same date
-                        val bottomPadding = if (index < tasks.size - 1) 8.dp else 0.dp
-                        Text(
-                            text = "${task.name} | ${task.time}",
-                            color = Color.White,
-                            fontSize = 15.sp,
+                        val bottomPadding = if (index < tasks.size - 1) 7.dp else 10.dp
+                        Row(
                             modifier = Modifier
+                                .padding(bottom = bottomPadding)
                                 .clip(RoundedCornerShape(20.dp))
                                 .background(Color(0xFF737483))
                                 .padding(14.dp)
+                                .height(36.dp)
                                 .fillMaxWidth()
-                                .padding(bottom = bottomPadding)
-                                .clickable { viewModel.onEvent(TaskEvent.EditTask(task)) }
-                        )
+                                .clickable { viewModel.onEvent(TaskEvent.EditTask(task)) },
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column {
+                                Text(
+                                    text = task.name,
+                                    color = Color.White,
+                                    fontSize = 17.sp,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                                Text(
+                                    text = task.time,
+                                    color = Color.White,
+                                    fontSize = 12.sp, // Smaller font size for the time
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .size(37.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFF6597DD))
+                            )
+                        }
                         Log.d("HomeScreen", "Displaying task: ${task.name}")
                     }
-                    Log.d("HomeScreen", "LazyColumn recomposing with ${state.task.size} tasks")
                 }
             }
-            // AddTaskDialog is conditionally displayed based on state.isAddingTask
-            if (state.isAddingTask) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.BottomCenter
-                ) {
-                    AddTaskDialog(
-                        state = state,
-                        onEvent = { viewModel.onEvent(it) }
-                    )
-                }
+        }
+
+        // AddTaskDialog is conditionally displayed based on state.isAddingTask
+        if (state.isAddingTask) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                AddTaskDialog(
+                    state = state,
+                    onEvent = { viewModel.onEvent(it) }
+                )
             }
         }
     }
