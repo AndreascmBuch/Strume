@@ -160,7 +160,7 @@ fun Navigation(state: TaskState, onEvent: (TaskEvent) -> Unit) {
                     }
                 },
                 shape = RoundedCornerShape(30.dp),
-                containerColor = Color(0xFF00C2FF),
+                containerColor = Color(0xFF3b77f0),
             ) {
                 Icon(fabIcon, contentDescription = "Fab")
             }

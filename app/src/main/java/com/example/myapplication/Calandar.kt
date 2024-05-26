@@ -64,14 +64,14 @@ fun Calendar(state: TaskState) {
                     .padding(bottom = 16.dp)
             ) {
                 Text(
-                    text = "Plan your life",
+                    text = "Your Calendar",
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     modifier = Modifier.padding(top = 84.dp, bottom = 2.dp)
                 )
                 Text(
-                    text = "Add event forward in time",
+                    text = "Get an overview of your tasks",
                     fontSize = 22.sp,
                     color = Color.White,
                     modifier = Modifier.padding(bottom = 24.dp)

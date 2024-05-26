@@ -48,6 +48,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.window.Dialog
 import com.example.myapplication.R
 
@@ -206,8 +207,12 @@ fun AddHabitDialog(
                     val habitNameState = remember { mutableStateOf("") }
                     var selectedFrequency by remember { mutableStateOf<Frequency>(Frequency.Daily) }
 
-                    Text(text = "Add New Habit", style = MaterialTheme.typography.headlineLarge)
+                    Text(
+                        text = "Add new Habit",
+                        style = MaterialTheme.typography.headlineLarge)
+
                     Spacer(modifier = Modifier.height(8.dp))
+
                     TextField(
                         value = habitNameState.value,
                         onValueChange = { habitNameState.value = it },
@@ -249,7 +254,6 @@ fun AddHabitDialog(
     }
 }
 
-
 @Composable
 fun HabitsScreen(viewModel: HabitsViewModel = viewModel()) {
     val showDialog by viewModel.showAddHabitDialog
@@ -267,22 +271,24 @@ fun HabitsScreen(viewModel: HabitsViewModel = viewModel()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 16.dp, end = 16.dp, top = 32.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 60.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-
-            Text(text = "Habits", color = Color.White, fontSize = 36.sp)
             Text(
-                text = "Keep up your good Habits for a healthy life",
+                text = "Habits",
                 color = Color.White,
-                fontSize = 20.sp
+                fontSize = 36.sp,
+                fontWeight = FontWeight.Bold)
+            Text(
+                text = "Keep up your good habits for a healthy life",
+                color = Color.White,
+                fontSize = 22.sp
             )
             Spacer(modifier = Modifier.height(150.dp))
             LazyColumn(
                 contentPadding = PaddingValues(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-
                 ) {
                 items(items = viewModel.habits) { item ->
                     HabitItemRow(
@@ -292,6 +298,7 @@ fun HabitsScreen(viewModel: HabitsViewModel = viewModel()) {
                 }
             }
         }
+
         AddHabitDialog(
             showDialog = showDialog,
             onDismissRequest = { viewModel.hideAddHabitDialog() },
@@ -306,13 +313,3 @@ fun HabitsScreen(viewModel: HabitsViewModel = viewModel()) {
         )
     }
 }
-
-
-
-
-
-
-
-
-
-

@@ -95,28 +95,50 @@ fun AddTaskDialog(
                         Text(text = "Task Name")
                     }
                 )
-                Button(onClick = { showDatePicker() }) {
-                    Text("Select Date: ${state.date}")
-                }
-                Button(onClick = { showTimePicker() }) {
-                    Text("Select Time: ${state.time}")
-                }
             }
         },
         confirmButton = {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(all = 8.dp)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(8.dp)
             ) {
-                Button(
-                    onClick = { onEvent(TaskEvent.HideDialog) }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "Cancel")
+                    Button(
+                        onClick = { showDatePicker() },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3b77f0)), // Updated button color
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(text = if (state.editingTaskId == null) "Select Date" else "Edit Date") // Updated text for editing
+                    }
+                    Button(
+                        onClick = { showTimePicker() },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3b77f0)), // Updated button color
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(text = if (state.editingTaskId == null) "Select Time" else "Edit Time") // Updated text for editing
+                    }
                 }
-                Button(
-                    onClick = { onEvent(TaskEvent.SaveTask) }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = if (state.editingTaskId == null) "Save" else "Update")
+                    Button(
+                        onClick = { onEvent(TaskEvent.HideDialog) },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3b77f0)), // Updated button color
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(text = "Cancel")
+                    }
+                    Button(
+                        onClick = { onEvent(TaskEvent.SaveTask) },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3b77f0)), // Updated button color
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(text = if (state.editingTaskId == null) "Save" else "Update")
+                    }
                 }
                 if (state.editingTaskId != null) { // Only show "Delete" button if editing a task
                     Button(
@@ -126,7 +148,10 @@ fun AddTaskDialog(
                                 onEvent(TaskEvent.DeleteTask(task))
                             }
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA32920)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
                     ) {
                         Text(text = "Delete")
                     }
@@ -138,6 +163,7 @@ fun AddTaskDialog(
         }
     )
 }
+
 @Composable
 fun HomeScreen(viewModel: HomeViewmodel) {
     val state by viewModel.state.collectAsState()
@@ -176,7 +202,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
 
             Text(
                 text = "Hello",
-                fontSize = 30.sp,
+                fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
                 modifier = Modifier
@@ -185,7 +211,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
             )
             Text(
                 text = "Here are your tasks for the day",
-                fontSize = 16.sp,
+                fontSize = 22.sp,
                 color = Color.White,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -218,7 +244,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                         // Calculate dynamic bottom padding for tasks on the same date
                         val bottomPadding = if (index < tasks.size - 1) 8.dp else 0.dp
                         Text(
-                            text = "${task.name}, ${task.time}",
+                            text = "${task.name} | ${task.time}",
                             color = Color.White,
                             fontSize = 15.sp,
                             modifier = Modifier
