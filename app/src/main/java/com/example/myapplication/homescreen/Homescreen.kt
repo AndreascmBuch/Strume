@@ -54,7 +54,7 @@ fun AddTaskDialog(
             { _, year, month, dayOfMonth ->
                 val localDate = LocalDate.of(year, month + 1, dayOfMonth)
                 val dateString = localDate.format(
-                    DateTimeFormatter.ofPattern("EEEE, d'${getDayOfMonthSuffix(dayOfMonth)}' MMMM")
+                    DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy")
                 )
                 onEvent(TaskEvent.SetDate(dateString))
             },
@@ -150,8 +150,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
     }
 
     // Added date formatter for parsing the date strings
-    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d'suffix' MMMM")
-
+    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy")
     // Sort tasks by date and time
     val sortedTasks = state.task.sortedWith(compareBy(
         // Parsing the date and time strings to LocalDate and LocalTime
