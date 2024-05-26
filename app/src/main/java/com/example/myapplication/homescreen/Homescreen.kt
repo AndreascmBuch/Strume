@@ -24,6 +24,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.ui.layout.ContentScale
 
 fun getDayOfMonthSuffix(day: Int): String {
@@ -213,7 +214,9 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                         )
                     }
                     // Display each task under the current date
-                    items(tasks) { task ->
+                    itemsIndexed(tasks) { index, task ->
+                        // Calculate dynamic bottom padding for tasks on the same date
+                        val bottomPadding = if (index < tasks.size - 1) 8.dp else 0.dp
                         Text(
                             text = "${task.name}, ${task.time}",
                             color = Color.White,
@@ -223,6 +226,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                                 .background(Color(0xFF737483))
                                 .padding(14.dp)
                                 .fillMaxWidth()
+                                .padding(bottom = bottomPadding)
                                 .clickable { viewModel.onEvent(TaskEvent.EditTask(task)) }
                         )
                         Log.d("HomeScreen", "Displaying task: ${task.name}")
