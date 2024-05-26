@@ -20,12 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.myapplication.R
 import com.example.myapplication.navigation.Screens
-
 
 @Composable
 fun Welcome(navController: NavController) {
@@ -74,9 +74,13 @@ fun Welcome(navController: NavController) {
                     }
                 },
                 modifier = Modifier.padding(vertical = 8.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xFF6597DD))
+                colors = ButtonDefaults.buttonColors(Color(0xFF3b77f0))
             ) {
-                Text(text = "Continue", color = Color.White)
+                Text(
+                    text = "Continue to app",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }

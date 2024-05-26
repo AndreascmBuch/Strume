@@ -1,6 +1,5 @@
 package com.example.myapplication.habitscreen
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,9 +41,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -87,7 +89,6 @@ fun DropDownMenu(
         }
     }
 }
-
 
 @Composable
 fun HabitItemRow(item: HabitData, viewModel: HabitsViewModel) {
@@ -183,8 +184,7 @@ fun HabitItemRow(item: HabitData, viewModel: HabitsViewModel) {
     }
 }
 
-
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddHabitDialog(
     showDialog: Boolean,
@@ -209,17 +209,28 @@ fun AddHabitDialog(
 
                     Text(
                         text = "Add new Habit",
-                        style = MaterialTheme.typography.headlineLarge)
+                        style = MaterialTheme.typography.headlineLarge
+                    )
 
                     Spacer(modifier = Modifier.height(8.dp))
 
                     TextField(
                         value = habitNameState.value,
                         onValueChange = { habitNameState.value = it },
-                        label = { Text("Habit Name") },
-                        modifier = Modifier.fillMaxWidth()
+                        label = {
+                            Text(
+                                text = "Habit Name",
+                                color = Color.Black
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedLabelColor = Color(0xFF3b77f0)
+                        )
                     )
+
                     Spacer(modifier = Modifier.height(16.dp))
+
                     DropDownMenu(
                         frequencies = listOf(
                             Frequency.Daily,
@@ -229,23 +240,38 @@ fun AddHabitDialog(
                         selectedFrequency = selectedFrequency,
                         onFrequencySelected = { frequency ->
                             selectedFrequency = frequency
-                        },
+                        }
                     )
+
                     Spacer(modifier = Modifier.height(16.dp))
+
                     Row(
                         horizontalArrangement = Arrangement.End,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         TextButton(onClick = onDismissRequest) {
-                            Text("Cancel")
+                            Text(
+                                text = "Cancel",
+                                color = Color.Black, // Change cancel text color to black
+                                fontSize = 16.sp // Increase text size
+                            )
                         }
+
                         Spacer(modifier = Modifier.width(8.dp))
-                        Button(onClick = {
-                            onHabitAdd(habitNameState.value, selectedFrequency)
-                            habitNameState.value = ""
-                            onDismissRequest()
-                        }) {
-                            Text("Add")
+
+                        Button(
+                            onClick = {
+                                onHabitAdd(habitNameState.value, selectedFrequency)
+                                habitNameState.value = ""
+                                onDismissRequest()
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3b77f0)), // Change button color
+                            modifier = Modifier.padding(start = 8.dp)
+                        ) {
+                            Text(
+                                text = "Add",
+                                fontSize = 16.sp // Increase text size
+                            )
                         }
                     }
                 }
@@ -263,7 +289,7 @@ fun HabitsScreen(viewModel: HabitsViewModel = viewModel()) {
         Image(
             painter = painterResource(id = R.drawable.homescreenshapes),
             contentDescription = "Shape",
-            contentScale = ContentScale.Crop,  // Ensure the image covers the top area
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)

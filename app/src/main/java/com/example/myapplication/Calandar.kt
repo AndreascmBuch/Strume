@@ -139,11 +139,11 @@ fun Calendar(state: TaskState) {
                                     .weight(1f)
                                     .size(48.dp)
                                     .clip(CircleShape)
-                                    .background(if (selectedDate == date) Color(0x8021B6E8) else Color.Transparent)
+                                    .background(if (selectedDate == date) Color(0x5E3B77F0) else Color.Transparent)
                                     .border(
                                         width = 2.dp,
                                         // If task value is present, then border, else transparent
-                                        color = if (hasTask) Color(0x9921B6E8) else Color.Transparent,
+                                        color = if (hasTask) Color(0xB73B77F0) else Color.Transparent,
                                         shape = CircleShape
                                     )
                                     .clickable {

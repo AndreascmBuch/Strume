@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -30,7 +29,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
@@ -42,7 +40,6 @@ import com.example.myapplication.homescreen.HomeViewmodel
 import com.example.myapplication.homescreen.TaskEvent
 import com.example.myapplication.homescreen.TaskState
 import com.example.myapplication.welcomescreen.Welcome
-
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -160,17 +157,10 @@ fun Navigation(state: TaskState, onEvent: (TaskEvent) -> Unit) {
                     }
                 },
                 shape = RoundedCornerShape(30.dp),
-                containerColor = Color(0xFF3b77f0),
+                containerColor = Color(0xFF1756D5),
             ) {
                 Icon(fabIcon, contentDescription = "Fab")
             }
         }
     }
 }
-
-
-
-
-
-
-
