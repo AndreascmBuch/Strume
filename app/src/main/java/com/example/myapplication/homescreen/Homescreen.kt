@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -25,7 +24,9 @@ import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.layout.ContentScale
+import java.time.LocalTime
 
 fun getDayOfMonthSuffix(day: Int): String {
     return when {
@@ -52,7 +53,7 @@ fun AddTaskDialog(
             { _, year, month, dayOfMonth ->
                 val localDate = LocalDate.of(year, month + 1, dayOfMonth)
                 val dateString = localDate.format(
-                    DateTimeFormatter.ofPattern("EEEE, d'${getDayOfMonthSuffix(dayOfMonth)}' MMMM")
+                    DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy")
                 )
                 onEvent(TaskEvent.SetDate(dateString))
             },
@@ -95,28 +96,50 @@ fun AddTaskDialog(
                         Text(text = "Task Name")
                     }
                 )
-                Button(onClick = { showDatePicker() }) {
-                    Text("Select Date: ${state.date}")
-                }
-                Button(onClick = { showTimePicker() }) {
-                    Text("Select Time: ${state.time}")
-                }
             }
         },
         confirmButton = {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(all = 8.dp)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(8.dp)
             ) {
-                Button(
-                    onClick = { onEvent(TaskEvent.HideDialog) }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "Cancel")
+                    Button(
+                        onClick = { showDatePicker() },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xE63B77F0)),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(text = if (state.editingTaskId == null) "Select Date" else "Edit Date")
+                    }
+                    Button(
+                        onClick = { showTimePicker() },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xE63B77F0)),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(text = if (state.editingTaskId == null) "Select Time" else "Edit Time")
+                    }
                 }
-                Button(
-                    onClick = { onEvent(TaskEvent.SaveTask) }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = if (state.editingTaskId == null) "Save" else "Update")
+                    Button(
+                        onClick = { onEvent(TaskEvent.HideDialog) },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xE63B77F0)),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(text = "Cancel")
+                    }
+                    Button(
+                        onClick = { onEvent(TaskEvent.SaveTask) },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xE63B77F0)),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(text = if (state.editingTaskId == null) "Save" else "Save")
+                    }
                 }
                 if (state.editingTaskId != null) { // Only show "Delete" button if editing a task
                     Button(
@@ -126,7 +149,12 @@ fun AddTaskDialog(
                                 onEvent(TaskEvent.DeleteTask(task))
                             }
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xE6A32920)),
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = 8.dp)
+                            .heightIn(min = 40.dp)
+                            .fillMaxWidth(0.6f)
                     ) {
                         Text(text = "Delete")
                     }
@@ -138,6 +166,7 @@ fun AddTaskDialog(
         }
     )
 }
+
 @Composable
 fun HomeScreen(viewModel: HomeViewmodel) {
     val state by viewModel.state.collectAsState()
@@ -147,7 +176,16 @@ fun HomeScreen(viewModel: HomeViewmodel) {
         Log.d("HomeScreen", "Tasks have changed. Size: ${state.task.size}")
     }
 
-    val tasksGroupedByDate = state.task.groupBy { it.date }
+    // Added date formatter for parsing the date strings
+    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy")
+    // Sort tasks by date and time
+    val sortedTasks = state.task.sortedWith(compareBy(
+        // Parsing the date and time strings to LocalDate and LocalTime
+        { LocalDate.parse(it.date.replace(Regex("(st|nd|rd|th)"), ""), dateFormatter) },
+        { LocalTime.parse(it.time) }
+    ))
+
+    val tasksGroupedByDate = sortedTasks.groupBy { it.date }
 
     Box(
         modifier = Modifier
@@ -176,7 +214,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
 
             Text(
                 text = "Hello",
-                fontSize = 30.sp,
+                fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
                 modifier = Modifier
@@ -185,7 +223,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
             )
             Text(
                 text = "Here are your tasks for the day",
-                fontSize = 16.sp,
+                fontSize = 22.sp,
                 color = Color.White,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -216,35 +254,55 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                     // Display each task under the current date
                     itemsIndexed(tasks) { index, task ->
                         // Calculate dynamic bottom padding for tasks on the same date
-                        val bottomPadding = if (index < tasks.size - 1) 8.dp else 0.dp
-                        Text(
-                            text = "${task.name}, ${task.time}",
-                            color = Color.White,
-                            fontSize = 15.sp,
+                        val bottomPadding = if (index < tasks.size - 1) 7.dp else 10.dp
+                        Row(
                             modifier = Modifier
+                                .padding(bottom = bottomPadding)
                                 .clip(RoundedCornerShape(20.dp))
                                 .background(Color(0xFF737483))
                                 .padding(14.dp)
+                                .height(36.dp)
                                 .fillMaxWidth()
-                                .padding(bottom = bottomPadding)
-                                .clickable { viewModel.onEventForTask(TaskEvent.EditTask(task)) }
-                        )
+                                .clickable { viewModel.onEvent(TaskEvent.EditTask(task)) },
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column {
+                                Text(
+                                    text = task.name,
+                                    color = Color.White,
+                                    fontSize = 17.sp,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                                Text(
+                                    text = task.time,
+                                    color = Color.White,
+                                    fontSize = 12.sp, // Smaller font size for the time
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .size(37.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFF6597DD))
+                            )
+                        }
                         Log.d("HomeScreen", "Displaying task: ${task.name}")
                     }
-                    Log.d("HomeScreen", "LazyColumn recomposing with ${state.task.size} tasks")
                 }
             }
-            // AddTaskDialog is conditionally displayed based on state.isAddingTask
-            if (state.isAddingTask) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.BottomCenter
-                ) {
-                    AddTaskDialog(
-                        state = state,
-                        onEvent = { viewModel.onEventForTask(it) }
-                    )
-                }
+        }
+
+        // AddTaskDialog is conditionally displayed based on state.isAddingTask
+        if (state.isAddingTask) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                AddTaskDialog(
+                    state = state,
+                    onEvent = { viewModel.onEvent(it) }
+                )
             }
         }
     }

@@ -3,14 +3,15 @@ package com.example.myapplication.navigation
 import Calendar
 import androidx.annotation.OptIn
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -30,7 +31,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
@@ -44,7 +44,6 @@ import com.example.myapplication.homescreen.HomeViewmodel
 import com.example.myapplication.homescreen.TaskEvent
 import com.example.myapplication.homescreen.TaskState
 import com.example.myapplication.welcomescreen.Welcome
-
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -162,17 +161,18 @@ fun Navigation(homeState: TaskState, onEventForTask: (TaskEvent) -> Unit, habitS
                     }
                 },
                 shape = RoundedCornerShape(30.dp),
-                containerColor = Color(0xFF00C2FF),
+                containerColor = Color(0xFF3b77f0),
+                contentColor = Color.White,
+                modifier = Modifier
+                    .padding(4.dp)
+                    .border(
+                        width = 2.dp,
+                        color = Color(0xFF002163),
+                        shape = CircleShape
+                    )
             ) {
                 Icon(fabIcon, contentDescription = "Fab")
             }
         }
     }
 }
-
-
-
-
-
-
-

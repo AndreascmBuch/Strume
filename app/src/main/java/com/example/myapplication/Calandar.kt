@@ -64,14 +64,14 @@ fun Calendar(state: TaskState) {
                     .padding(bottom = 16.dp)
             ) {
                 Text(
-                    text = "Plan your life",
+                    text = "Your Calendar",
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     modifier = Modifier.padding(top = 84.dp, bottom = 2.dp)
                 )
                 Text(
-                    text = "Add event forward in time",
+                    text = "Get an overview of your tasks",
                     fontSize = 22.sp,
                     color = Color.White,
                     modifier = Modifier.padding(bottom = 24.dp)
@@ -139,11 +139,11 @@ fun Calendar(state: TaskState) {
                                     .weight(1f)
                                     .size(48.dp)
                                     .clip(CircleShape)
-                                    .background(if (selectedDate == date) Color(0x8021B6E8) else Color.Transparent)
+                                    .background(if (selectedDate == date) Color(0x5E3B77F0) else Color.Transparent)
                                     .border(
                                         width = 2.dp,
                                         // If task value is present, then border, else transparent
-                                        color = if (hasTask) Color(0x9921B6E8) else Color.Transparent,
+                                        color = if (hasTask) Color(0xFF3B77F0) else Color.Transparent,
                                         shape = CircleShape
                                     )
                                     .clickable {
@@ -185,7 +185,7 @@ fun Calendar(state: TaskState) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(285.dp)  // Adjust height of the bottom sheet
+                        .height(275.dp)  // Adjust height of the bottom sheet
                         .padding(16.dp)
                         .background(Color(0xFF4E4853), shape = RoundedCornerShape(16.dp))
                 ) {
