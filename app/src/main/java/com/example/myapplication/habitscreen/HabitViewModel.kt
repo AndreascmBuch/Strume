@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
+import java.time.LocalDateTime
 
 
 class HabitViewModel(private val dao: HabitDao) : ViewModel() {
@@ -49,6 +49,7 @@ class HabitViewModel(private val dao: HabitDao) : ViewModel() {
                 viewModelScope.launch {
                     val habit = event.habit.copy(
                         streak = event.habit.streak + 1,
+                        lastUpdated = LocalDateTime.now()
                     )
                     dao.upsertHabit(habit)
                 }
