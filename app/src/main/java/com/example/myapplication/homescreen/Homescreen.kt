@@ -56,6 +56,7 @@ fun AddTaskDialog(
             { _, year, month, dayOfMonth ->
                 val localDate = LocalDate.of(year, month + 1, dayOfMonth)
                 val dateString = localDate.format(dateFormatter)
+                Log.d("AddTaskDialog", "Selected Date: $dateString")
                 onEvent(TaskEvent.SetDate(dateString))
             },
             calendar.get(Calendar.YEAR),
@@ -70,6 +71,7 @@ fun AddTaskDialog(
             context,
             { _, hourOfDay, minute ->
                 val timeString = String.format("%02d:%02d", hourOfDay, minute)
+                Log.d("AddTaskDialog", "Selected Time: $timeString")
                 onEvent(TaskEvent.SetTime(timeString))
             },
             calendar.get(Calendar.HOUR_OF_DAY),
@@ -185,21 +187,27 @@ fun HomeScreen(viewModel: HomeViewmodel) {
         // Parsing the date and time strings to LocalDate and LocalTime
         {
             try {
-                LocalDate.parse(it.date.replace(Regex("(st|nd|rd|th)"), ""), dateFormatter)
+                val parsedDate = LocalDate.parse(it.date.replace(Regex("(st|nd|rd|th)"), ""), dateFormatter)
+                Log.d("HomeScreen", "Parsed date: $parsedDate from original date: ${it.date}")
+                parsedDate
             } catch (e: Exception) {
                 Log.e("HomeScreen", "Error parsing date: ${it.date}", e)
-                LocalDate.now() // Fallback to current date in case of error
+                LocalDate.MIN // Use minimum date as fallback
             }
         },
         {
             try {
-                LocalTime.parse(it.time)
+                val parsedTime = LocalTime.parse(it.time)
+                Log.d("HomeScreen", "Parsed time: $parsedTime from original time: ${it.time}")
+                parsedTime
             } catch (e: Exception) {
                 Log.e("HomeScreen", "Error parsing time: ${it.time}", e)
-                LocalTime.now() // Fallback to current time in case of error
+                LocalTime.MIN // Use minimum time as fallback
             }
         }
     ))
+
+    Log.d("HomeScreen", "Sorted Tasks: ${sortedTasks.map { "${it.date} ${it.time} ${it.name}" }}")
 
     val tasksGroupedByDate = sortedTasks.groupBy { it.date }
 
