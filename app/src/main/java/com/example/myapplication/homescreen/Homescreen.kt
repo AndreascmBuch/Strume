@@ -263,7 +263,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                                 .padding(14.dp)
                                 .height(36.dp)
                                 .fillMaxWidth()
-                                .clickable { viewModel.onEvent(TaskEvent.EditTask(task)) },
+                                .clickable { viewModel.onEventForTask(TaskEvent.EditTask(task)) },
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
@@ -301,7 +301,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
             ) {
                 AddTaskDialog(
                     state = state,
-                    onEvent = { viewModel.onEvent(it) }
+                    onEvent = { viewModel.onEventForTask(it) }
                 )
             }
         }
