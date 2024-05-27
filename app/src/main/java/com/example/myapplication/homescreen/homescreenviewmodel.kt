@@ -38,7 +38,7 @@ class HomeViewmodel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TaskState())
 
-    fun onEvent(event: TaskEvent) {
+    fun onEventForTask(event: TaskEvent) {
         when (event) {
             is TaskEvent.DeleteTask -> {
                 viewModelScope.launch { dao.deleteTask(event.task) }

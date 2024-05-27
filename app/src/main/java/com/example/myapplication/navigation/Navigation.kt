@@ -35,8 +35,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import com.example.myapplication.Checklist
+import com.example.myapplication.habitscreen.HabitEvent
+import com.example.myapplication.habitscreen.HabitState
+import com.example.myapplication.habitscreen.HabitViewModel
 import com.example.myapplication.habitscreen.HabitsScreen
-import com.example.myapplication.habitscreen.HabitsViewModel
 import com.example.myapplication.homescreen.HomeScreen
 import com.example.myapplication.homescreen.HomeViewmodel
 import com.example.myapplication.homescreen.TaskEvent
@@ -46,12 +48,12 @@ import com.example.myapplication.welcomescreen.Welcome
 
 @OptIn(UnstableApi::class)
 @Composable
-fun Navigation(state: TaskState, onEvent: (TaskEvent) -> Unit) {
+fun Navigation(homeState: TaskState, onEventForTask: (TaskEvent) -> Unit, habitState:HabitState, onEventForHabit: (HabitEvent) -> Unit) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    val habitsViewModel: HabitsViewModel = viewModel()
+    val habitsViewModel: HabitViewModel = viewModel()
     val homeViewModel: HomeViewmodel = viewModel()
 
     Scaffold(
@@ -142,7 +144,7 @@ fun Navigation(state: TaskState, onEvent: (TaskEvent) -> Unit) {
                     when (currentDestination?.route) {
                         Screens.HomeScreen.name -> {
                             Log.d("Navigation", "ViewModel instance from FAB:")
-                            onEvent(TaskEvent.ShowDialog)
+                            onEventForTask(TaskEvent.ShowDialog)
                         }
 
                         Screens.CalendarScreen.name -> {
@@ -151,7 +153,7 @@ fun Navigation(state: TaskState, onEvent: (TaskEvent) -> Unit) {
 
                         Screens.HabitsScreen.name -> {
                             Log.d("Navigation", "HabitViewModel instance from FAB:")
-                            habitsViewModel.showAddHabitDialog()
+                            onEventForHabit(HabitEvent.ShowDialog)
                         }
 
                         Screens.ListScreen.name -> {

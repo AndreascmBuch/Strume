@@ -227,7 +227,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                                 .padding(14.dp)
                                 .fillMaxWidth()
                                 .padding(bottom = bottomPadding)
-                                .clickable { viewModel.onEvent(TaskEvent.EditTask(task)) }
+                                .clickable { viewModel.onEventForTask(TaskEvent.EditTask(task)) }
                         )
                         Log.d("HomeScreen", "Displaying task: ${task.name}")
                     }
@@ -242,7 +242,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                 ) {
                     AddTaskDialog(
                         state = state,
-                        onEvent = { viewModel.onEvent(it) }
+                        onEvent = { viewModel.onEventForTask(it) }
                     )
                 }
             }
