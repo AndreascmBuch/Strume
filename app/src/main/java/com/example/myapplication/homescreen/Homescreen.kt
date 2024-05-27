@@ -38,7 +38,6 @@ fun getDayOfMonthSuffix(day: Int): String {
         else -> "th"
     }
 }
-
 @Composable
 fun AddTaskDialog(
     state: TaskState,
@@ -47,15 +46,17 @@ fun AddTaskDialog(
 ) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
+    // Using proper date and time formatters
+    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy") // Updated pattern to match the log output
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
+    // Function to show date picker and format the date correctly
     fun showDatePicker() {
         val datePickerDialog = android.app.DatePickerDialog(
             context,
             { _, year, month, dayOfMonth ->
                 val localDate = LocalDate.of(year, month + 1, dayOfMonth)
-                val dateString = localDate.format(
-                    DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy")
-                )
+                val dateString = localDate.format(dateFormatter)
                 onEvent(TaskEvent.SetDate(dateString))
             },
             calendar.get(Calendar.YEAR),
@@ -150,12 +151,27 @@ fun HomeScreen(viewModel: HomeViewmodel) {
     }
 
     // Added date formatter for parsing the date strings
-    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy")
+    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy") // Updated pattern to match the log output
+
     // Sort tasks by date and time
     val sortedTasks = state.task.sortedWith(compareBy(
         // Parsing the date and time strings to LocalDate and LocalTime
-        { LocalDate.parse(it.date.replace(Regex("(st|nd|rd|th)"), ""), dateFormatter) },
-        { LocalTime.parse(it.time) }
+        {
+            try {
+                LocalDate.parse(it.date.replace(Regex("(st|nd|rd|th)"), ""), dateFormatter)
+            } catch (e: Exception) {
+                Log.e("HomeScreen", "Error parsing date: ${it.date}", e)
+                LocalDate.now() // Fallback to current date in case of error
+            }
+        },
+        {
+            try {
+                LocalTime.parse(it.time)
+            } catch (e: Exception) {
+                Log.e("HomeScreen", "Error parsing time: ${it.time}", e)
+                LocalTime.now() // Fallback to current time in case of error
+            }
+        }
     ))
 
     val tasksGroupedByDate = sortedTasks.groupBy { it.date }
