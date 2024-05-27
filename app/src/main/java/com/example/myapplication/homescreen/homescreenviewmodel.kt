@@ -34,19 +34,32 @@ class HomeViewmodel(
     val state = combine(_state, _sortType, _task) { state, sortType, task ->
         state.copy(
             task = task,
-            sortType=sortType
+            sortType = sortType
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TaskState())
 
     fun onEventForTask(event: TaskEvent) {
         when (event) {
             is TaskEvent.DeleteTask -> {
-                viewModelScope.launch { dao.deleteTask(event.task) }
-                _state.update { it.copy(isAddingTask = false, name = "", date = "", time = "", editingTaskId = null) }
+                // Launching a coroutine to handle deletion off the main thread
+                viewModelScope.launch {
+                    dao.deleteTask(event.task)
+                    _state.update {
+                        it.copy(
+                            isAddingTask = false,
+                            name = "",
+                            date = "",
+                            time = "",
+                            editingTaskId = null
+                        )
+                    }
+                }
             }
+
             is TaskEvent.HideDialog -> {
                 _state.update { it.copy(isAddingTask = false) }
             }
+
             is TaskEvent.SaveTask -> {
                 val name = state.value.name
                 val date = state.value.date
@@ -54,28 +67,44 @@ class HomeViewmodel(
                 if (name.isBlank() || date.isBlank() || time.isBlank()) {
                     return
                 }
-                val task = Task(name = name, date = date, time = time, id = state.value.editingTaskId ?: 0) // Added logic to handle editing tasks
+                val task =
+                    Task(name = name, date = date, time = time, id = state.value.editingTaskId ?: 0)
+                // Launching a coroutine to handle saving/updating off the main thread
                 viewModelScope.launch {
                     dao.upsertTask(task)
+                    _state.update {
+                        it.copy(
+                            isAddingTask = false,
+                            name = "",
+                            date = "",
+                            time = "",
+                            editingTaskId = null
+                        )
+                    }
                 }
-                _state.update { it.copy(isAddingTask = false, name = "", date = "", time = "", editingTaskId = null) } // Reset editingTaskId
             }
+
             is TaskEvent.SetDate -> {
                 _state.update { it.copy(date = event.date) }
             }
+
             is TaskEvent.SetTime -> {
                 _state.update { it.copy(time = event.time) }
             }
+
             is TaskEvent.SetName -> {
                 _state.update { it.copy(name = event.name) }
             }
+
             is TaskEvent.ShowDialog -> {
-                _state.update { it.copy(isAddingTask = true, editingTaskId = null) } // Reset editingTaskId when showing dialog for adding
+                _state.update { it.copy(isAddingTask = true, editingTaskId = null) }
             }
+
             is TaskEvent.SortTask -> {
                 _sortType.value = event.sortType
             }
-            is TaskEvent.EditTask -> { // New event to handle task editing
+
+            is TaskEvent.EditTask -> {
                 val task = event.task
                 _state.update {
                     it.copy(
@@ -83,7 +112,7 @@ class HomeViewmodel(
                         name = task.name,
                         date = task.date,
                         time = task.time,
-                        editingTaskId = task.id // Set editingTaskId
+                        editingTaskId = task.id
                     )
                 }
             }
