@@ -230,7 +230,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 60.dp),
+                .padding(top = 65.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -246,7 +246,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                     .background(Color.Transparent)
             )
             Text(
-                text = "Here are your tasks for the day",
+                text = "Here are your upcoming tasks",
                 fontSize = 22.sp,
                 color = Color.White,
                 modifier = Modifier

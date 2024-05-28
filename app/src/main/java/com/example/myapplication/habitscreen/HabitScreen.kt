@@ -44,12 +44,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-
 
 @Composable
 fun AddHabitDialog(
@@ -99,8 +99,6 @@ fun AddHabitDialog(
     }
 }
 
-
-
 @Composable
 fun HabitsScreen(viewModel: HabitViewModel) {
     val state by viewModel.state.collectAsState()
@@ -123,9 +121,22 @@ fun HabitsScreen(viewModel: HabitViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Text(text = "Habits", color = Color.White, fontSize = 36.sp)
-            Text(text = "Keep up your good habits for a healthy life", color = Color.White, fontSize = 20.sp)
+
+            Text(
+                text = "Habits",
+                color = Color.White,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 50.dp)
+            )
+            Text(
+                text = "Keep up your good habits for a healthy life",
+                color = Color.White,
+                fontSize = 20.sp
+            )
+
             Spacer(modifier = Modifier.height(150.dp))
+
             LazyColumn(contentPadding = PaddingValues(vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(items = state.habits) { habit ->
                     HabitItemRow(habit, viewModel)
@@ -139,10 +150,6 @@ fun HabitsScreen(viewModel: HabitViewModel) {
         )
     }
 }
-
-
-
-
 
 @Composable
 fun HabitItemRow(habit: Habit, viewModel: HabitViewModel) {
@@ -237,17 +244,7 @@ fun DropDownMenu(
                     },
                     text = { Text(text = "Frequency: ${frequency.displayName}")}
                 )
-
             }
-
         }
     }
 }
-
-
-
-
-
-
-
-
