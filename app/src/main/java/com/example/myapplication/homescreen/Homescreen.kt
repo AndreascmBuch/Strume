@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.layout.ContentScale
 import java.time.LocalTime
 
+// Hjælpefunktion til at få endelsen på dagens dato (f.eks. "st", "nd", "rd", "th")
 fun getDayOfMonthSuffix(day: Int): String {
     return when {
         day in 11..13 -> "th"
@@ -37,6 +38,7 @@ fun getDayOfMonthSuffix(day: Int): String {
         else -> "th"
     }
 }
+
 @Composable
 fun AddTaskDialog(
     state: TaskState,
@@ -45,11 +47,11 @@ fun AddTaskDialog(
 ) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
-    // Using proper date and time formatters
-    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy") // Updated pattern to match the log output
+    // Brug af korrekte dato- og tidsformater
+    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy") // Opdateret mønster for at matche logoutput
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
-    // Function to show date picker and format the date correctly
+    // Funktion til at vise dato-vælger og formatere datoen korrekt
     fun showDatePicker() {
         val datePickerDialog = android.app.DatePickerDialog(
             context,
@@ -66,6 +68,7 @@ fun AddTaskDialog(
         datePickerDialog.show()
     }
 
+    // Funktion til at vise tidsvælger og formatere tiden korrekt
     fun showTimePicker() {
         TimePickerDialog(
             context,
@@ -80,6 +83,7 @@ fun AddTaskDialog(
         ).show()
     }
 
+    // Hoveddialog for tilføjelse eller redigering af opgaver
     AlertDialog(
         modifier = modifier,
         onDismissRequest = {
@@ -144,7 +148,7 @@ fun AddTaskDialog(
                         Text(text = if (state.editingTaskId == null) "Save" else "Save")
                     }
                 }
-                if (state.editingTaskId != null) { // Only show "Delete" button if editing a task
+                if (state.editingTaskId != null) { // Vis kun "Delete" knappen hvis der redigeres en opgave
                     Button(
                         onClick = {
                             val task = state.task.find { it.id == state.editingTaskId }
@@ -165,7 +169,7 @@ fun AddTaskDialog(
             }
         },
         dismissButton = {
-            // This can be left empty if you don't want an additional dismiss button
+            // Dette kan være tomt, hvis du ikke ønsker en ekstra dismiss-knap
         }
     )
 }
@@ -179,12 +183,12 @@ fun HomeScreen(viewModel: HomeViewmodel) {
         Log.d("HomeScreen", "Tasks have changed. Size: ${state.task.size}")
     }
 
-    // Added date formatter for parsing the date strings
-    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy") // Updated pattern to match the log output
+    // Tilføjet datoformatter til parsing af datostrengene
+    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy") // Opdateret mønster for at matche logoutput
 
-    // Sort tasks by date and time
+    // Sorter opgaver efter dato og tid
     val sortedTasks = state.task.sortedWith(compareBy(
-        // Parsing the date and time strings to LocalDate and LocalTime
+        // Parsing af dato- og tidsstrenge til LocalDate og LocalTime
         {
             try {
                 val parsedDate = LocalDate.parse(it.date.replace(Regex("(st|nd|rd|th)"), ""), dateFormatter)
@@ -192,7 +196,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                 parsedDate
             } catch (e: Exception) {
                 Log.e("HomeScreen", "Error parsing date: ${it.date}", e)
-                LocalDate.MIN // Use minimum date as fallback
+                LocalDate.MIN // Brug minimum dato som fallback
             }
         },
         {
@@ -202,7 +206,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                 parsedTime
             } catch (e: Exception) {
                 Log.e("HomeScreen", "Error parsing time: ${it.time}", e)
-                LocalTime.MIN // Use minimum time as fallback
+                LocalTime.MIN // Brug minimum tid som fallback
             }
         }
     ))
@@ -216,7 +220,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
             .fillMaxSize()
             .background(color = Color(0xFF4E4853))
     ) {
-        // Background image
+        // Baggrundsbillede
         Image(
             painter = painterResource(id = R.drawable.homescreenshapes),
             contentDescription = "Shape",
@@ -226,7 +230,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                 .align(Alignment.TopCenter)
         )
 
-        // Overlaying text on top of the image
+        // Overlay tekst oven på billedet
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -261,9 +265,9 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                     .fillMaxWidth()
                     .padding(24.dp, 24.dp, 24.dp, 0.dp)
             ) {
-                // Iterate over the grouped tasks
+                // Iterer over de grupperede opgaver
                 tasksGroupedByDate.forEach { (date, tasks) ->
-                    // Display the date once for each group
+                    // Vis datoen én gang for hver gruppe
                     item {
                         Text(
                             text = date,
@@ -275,9 +279,9 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                                 .padding(top = 18.dp),
                         )
                     }
-                    // Display each task under the current date
+                    // Vis hver opgave under den aktuelle dato
                     itemsIndexed(tasks) { index, task ->
-                        // Calculate dynamic bottom padding for tasks on the same date
+                        // Beregn dynamisk bundpolstring for opgaver på samme dato
                         val bottomPadding = if (index < tasks.size - 1) 7.dp else 10.dp
                         Row(
                             modifier = Modifier
@@ -301,7 +305,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                                 Text(
                                     text = task.time,
                                     color = Color.White,
-                                    fontSize = 12.sp, // Smaller font size for the time
+                                    fontSize = 12.sp, // Mindre skriftstørrelse for tiden
                                 )
                             }
                             Box(
@@ -317,7 +321,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
             }
         }
 
-        // AddTaskDialog is conditionally displayed based on state.isAddingTask
+        // AddTaskDialog vises betinget af state.isAddingTask
         if (state.isAddingTask) {
             Box(
                 modifier = Modifier.fillMaxSize(),
