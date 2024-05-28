@@ -115,8 +115,8 @@ fun Calendar(state: TaskState) {
                 }
             }
 
-            val daysInMonth = 30
-            val firstDayOffset = 5 // June 1st is a Saturday, so offset is 5 (0-based index for Saturday)
+            val daysInMonth = 30 // 30 days in june
+            val firstDayOffset = 5 // June 1st is a Saturday, so offset by 5 (0 indexed, so 0 is monday and 6 is sunday)
             for (week in 0 until 6) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -185,7 +185,7 @@ fun Calendar(state: TaskState) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(275.dp)  // Adjust height of the bottom sheet
+                        .height(275.dp)  // Bottom sheet height
                         .padding(16.dp)
                         .background(Color(0xFF4E4853), shape = RoundedCornerShape(16.dp))
                 ) {

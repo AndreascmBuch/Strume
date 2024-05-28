@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -81,16 +82,24 @@ fun AddHabitDialog(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.padding(all = 8.dp)
                 ) {
-                    Button(onClick = { onEvent(HabitEvent.HideDialog) }) { Text(text = "Cancel") }
-                    Button(onClick = {
-                        val habit = Habit(
-                            name = state.name,
-                            frequency = state.frequency,
-                            streak = 0,
-                            id = state.editingHabitId ?: 0
-                        )
-                        onEvent(HabitEvent.SaveHabit(habit))
-                    }) {
+                    Button(
+                        onClick = { onEvent(HabitEvent.HideDialog) },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xE63B77F0))
+                    ) {
+                        Text(text = "Cancel")
+                    }
+                    Button(
+                        onClick = {
+                            val habit = Habit(
+                                name = state.name,
+                                frequency = state.frequency,
+                                streak = 0,
+                                id = state.editingHabitId ?: 0
+                            )
+                            onEvent(HabitEvent.SaveHabit(habit))
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xE63B77F0))
+                    ) {
                         Text(text = if (state.editingHabitId == null) "Save" else "Update")
                     }
                 }
