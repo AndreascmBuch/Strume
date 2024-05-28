@@ -71,6 +71,20 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // For LiveData and ViewModel testing
+    testImplementation ("androidx.arch.core:core-testing:2.1.0")
+
+    // For unit testing
+    testImplementation ("junit:junit:4.13.2")
+
+    // For coroutines testing
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
+
+    // For mocking
+    testImplementation ("org.mockito:mockito-core:3.11.2")
+    testImplementation ("org.mockito:mockito-inline:3.11.2")
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:3.2.0")
+
     var room_version = "2.6.1"
     implementation("androidx.room:room-ktx:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
