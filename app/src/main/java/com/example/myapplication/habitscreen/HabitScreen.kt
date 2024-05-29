@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+
 @Composable
 fun AddHabitDialog(
     state: HabitState,
@@ -71,7 +72,11 @@ fun AddHabitDialog(
                     )
                     // Dropdown menu til valg af frekvens for vanen
                     DropDownMenu(
-                        frequencies = listOf(Habit.Frequency.Daily, Habit.Frequency.SecondDay, Habit.Frequency.Weekly),
+                        frequencies = listOf(
+                            Habit.Frequency.Daily,
+                            Habit.Frequency.SecondDay,
+                            Habit.Frequency.Weekly
+                        ),
                         selectedFrequency = state.frequency,
                         onFrequencySelected = { onEvent(HabitEvent.SetFrequency(it)) }
                     )
@@ -114,9 +119,11 @@ fun AddHabitDialog(
 fun HabitsScreen(viewModel: HabitViewModel) {
     val state by viewModel.state.collectAsState()
     Log.d("HomeScreen", "Recomposing with ${state.habits.size} tasks")
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(color = Color(0xFF4E4853))) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color(0xFF4E4853))
+    ) {
         // Baggrundsbillede
         Image(
             painter = painterResource(id = R.drawable.homescreenshapes),
@@ -150,7 +157,10 @@ fun HabitsScreen(viewModel: HabitViewModel) {
             Spacer(modifier = Modifier.height(150.dp))
 
             // Liste af vaner, som vises i en LazyColumn
-            LazyColumn(contentPadding = PaddingValues(vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            LazyColumn(
+                contentPadding = PaddingValues(vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 items(items = state.habits) { habit ->
                     HabitItemRow(habit, viewModel)
                 }
@@ -214,10 +224,19 @@ fun HabitItemRow(habit: Habit, viewModel: HabitViewModel) {
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 // Visning af vane navn
-                Text(text = habit.name, fontSize = 20.sp, color = Color.White, modifier = Modifier.padding(start = 8.dp))
+                Text(
+                    text = habit.name,
+                    fontSize = 20.sp,
+                    color = Color.White,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
                 // Dropdown menu til valg af frekvens
                 DropDownMenu(
-                    frequencies = listOf(Habit.Frequency.Daily, Habit.Frequency.SecondDay, Habit.Frequency.Weekly),
+                    frequencies = listOf(
+                        Habit.Frequency.Daily,
+                        Habit.Frequency.SecondDay,
+                        Habit.Frequency.Weekly
+                    ),
                     selectedFrequency = habit.frequency,
                     onFrequencySelected = { newFrequency ->
                         viewModel.onEventForHabit(HabitEvent.SaveHabit(habit.copy(frequency = newFrequency)))
@@ -225,7 +244,11 @@ fun HabitItemRow(habit: Habit, viewModel: HabitViewModel) {
                 )
             }
             // Visning af streak og ikoner til hjerte og sletning
-            Text(text = "Streak: ${habit.streak}", color = Color.White, modifier = Modifier.padding(end = 8.dp))
+            Text(
+                text = "Streak: ${habit.streak}",
+                color = Color.White,
+                modifier = Modifier.padding(end = 8.dp)
+            )
             Icon(Icons.Default.Favorite, contentDescription = "Heartbeat", tint = Color.Red)
             IconButton(onClick = { viewModel.onEventForHabit(HabitEvent.DeleteHabit(habit)) }) {
                 Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.White)
@@ -262,7 +285,7 @@ fun DropDownMenu(
                         onFrequencySelected(frequency)
                         expanded = false // Luk menuen efter valg
                     },
-                    text = { Text(text = "Frequency: ${frequency.displayName}")}
+                    text = { Text(text = "Frequency: ${frequency.displayName}") }
                 )
             }
         }

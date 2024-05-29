@@ -22,22 +22,22 @@ data class NavItem(
 
 val listOfNavItems = listOf(
     NavItem(
-        title="Home",
+        title = "Home",
         icon = Icons.Default.Home,
         route = Screens.HomeScreen.name
-        ),
+    ),
     NavItem(
-        title="Calendar",
+        title = "Calendar",
         icon = Icons.Default.DateRange,
         route = Screens.CalendarScreen.name
     ),
     NavItem(
-        title="Habits",
+        title = "Habits",
         icon = Icons.Default.Favorite,
         route = Screens.HabitsScreen.name
     ),
     NavItem(
-        title="List",
+        title = "List",
         icon = Icons.Default.List,
         route = Screens.ListScreen.name
     ),

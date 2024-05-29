@@ -33,30 +33,50 @@ class HabitViewModel(private val dao: HabitDao) : ViewModel() {
                     dao.upsertHabit(event.habit)
                 }
                 // Opdater tilstanden for at lukke dialogen og nulstille felter
-                _state.update { it.copy(isAddingHabit = false, name = "", frequency = Habit.Frequency.Daily, editingHabitId = null) }
+                _state.update {
+                    it.copy(
+                        isAddingHabit = false,
+                        name = "",
+                        frequency = Habit.Frequency.Daily,
+                        editingHabitId = null
+                    )
+                }
             }
+
             is HabitEvent.SetName -> {
                 // Opdater tilstanden med det indtastede navn
                 _state.update { it.copy(name = event.name) }
             }
+
             is HabitEvent.SetFrequency -> {
                 // Opdater tilstanden med den valgte frekvens
                 _state.update { it.copy(frequency = event.frequency) }
             }
+
             is HabitEvent.DeleteHabit -> {
                 // Coroutine til at slette en vane fra databasen
                 viewModelScope.launch { dao.deleteHabit(event.habit) }
                 // Opdater tilstanden for at lukke dialogen og nulstille felter
-                _state.update { it.copy(isAddingHabit = false, name = "", frequency = Habit.Frequency.Daily, editingHabitId = null) }
+                _state.update {
+                    it.copy(
+                        isAddingHabit = false,
+                        name = "",
+                        frequency = Habit.Frequency.Daily,
+                        editingHabitId = null
+                    )
+                }
             }
+
             is HabitEvent.ShowDialog -> {
                 // Opdater tilstanden for at vise dialogen og nulstille redigeringstilstanden
                 _state.update { it.copy(isAddingHabit = true, editingHabitId = null) }
             }
+
             is HabitEvent.HideDialog -> {
                 // Opdater tilstanden for at skjule dialogen
                 _state.update { it.copy(isAddingHabit = false) }
             }
+
             is HabitEvent.IncrementStreak -> {
                 // Coroutine til at øge streak for en vane og opdatere sidste opdateringstidspunkt
                 viewModelScope.launch {
@@ -67,6 +87,7 @@ class HabitViewModel(private val dao: HabitDao) : ViewModel() {
                     dao.upsertHabit(habit)
                 }
             }
+
             is HabitEvent.ResetStreak -> {
                 // Coroutine til at nulstille streak for en vane
                 viewModelScope.launch {

@@ -48,7 +48,8 @@ fun AddTaskDialog(
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
     // Brug af korrekte dato- og tidsformater
-    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy") // Opdateret mønster for at matche logoutput
+    val dateFormatter =
+        DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy") // Opdateret mønster for at matche logoutput
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
     // Funktion til at vise dato-vælger og formatere datoen korrekt
@@ -184,14 +185,16 @@ fun HomeScreen(viewModel: HomeViewmodel) {
     }
 
     // Tilføjet datoformatter til parsing af datostrengene
-    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy") // Opdateret mønster for at matche logoutput
+    val dateFormatter =
+        DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy") // Opdateret mønster for at matche logoutput
 
     // Sorter opgaver efter dato og tid
     val sortedTasks = state.task.sortedWith(compareBy(
         // Parsing af dato- og tidsstrenge til LocalDate og LocalTime
         {
             try {
-                val parsedDate = LocalDate.parse(it.date.replace(Regex("(st|nd|rd|th)"), ""), dateFormatter)
+                val parsedDate =
+                    LocalDate.parse(it.date.replace(Regex("(st|nd|rd|th)"), ""), dateFormatter)
                 Log.d("HomeScreen", "Parsed date: $parsedDate from original date: ${it.date}")
                 parsedDate
             } catch (e: Exception) {

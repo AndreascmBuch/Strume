@@ -22,11 +22,13 @@ fun Checklist() {
     val items = listOf("Milk", "Eggs", "Bread", "Cheese", "Apples")
 
     // State to keep track of checked items
-    val checkedState = remember { mutableStateListOf<Boolean>().apply { addAll(List(items.size) { false }) } }
+    val checkedState =
+        remember { mutableStateListOf<Boolean>().apply { addAll(List(items.size) { false }) } }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(color = Color(0xFF4E4853))  // Set the background color for the entire checklist
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color(0xFF4E4853))  // Set the background color for the entire checklist
     ) {
 
         Column(
@@ -56,35 +58,36 @@ fun Checklist() {
                     .background(Color.Transparent)
             )
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp)
-        ) {
-            itemsIndexed(items) { index, item ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                ) {
-                    Checkbox(
-                        checked = checkedState[index],
-                        onCheckedChange = { checked ->
-                            checkedState[index] = checked
-                        },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = MaterialTheme.colorScheme.primary,
-                            uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
+            ) {
+                itemsIndexed(items) { index, item ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    ) {
+                        Checkbox(
+                            checked = checkedState[index],
+                            onCheckedChange = { checked ->
+                                checkedState[index] = checked
+                            },
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = MaterialTheme.colorScheme.primary,
+                                uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         )
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(item, color = Color.White)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(item, color = Color.White)
+                    }
                 }
             }
         }
     }
-}}
+}
 
 @Composable
 fun checklist() {

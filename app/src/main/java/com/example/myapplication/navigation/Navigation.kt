@@ -47,7 +47,12 @@ import com.example.myapplication.welcomescreen.Welcome
 
 @OptIn(UnstableApi::class)
 @Composable
-fun Navigation(homeState: TaskState, onEventForTask: (TaskEvent) -> Unit, habitState: HabitState, onEventForHabit: (HabitEvent) -> Unit) {
+fun Navigation(
+    homeState: TaskState,
+    onEventForTask: (TaskEvent) -> Unit,
+    habitState: HabitState,
+    onEventForHabit: (HabitEvent) -> Unit
+) {
     // Opretter en NavController til at styre navigationen
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()

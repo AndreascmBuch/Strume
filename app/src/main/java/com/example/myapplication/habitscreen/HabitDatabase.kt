@@ -26,6 +26,6 @@ object LocalDateTimeConverter {
 
 @Database(entities = [Habit::class], version = 1)
 @TypeConverters(LocalDateTimeConverter::class)
-abstract class HabitDatabase: RoomDatabase() {
+abstract class HabitDatabase : RoomDatabase() {
     abstract val habitDao: HabitDao
 }

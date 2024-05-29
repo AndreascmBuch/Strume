@@ -124,7 +124,8 @@ fun Calendar(state: TaskState) {
             }
 
             val daysInMonth = 30 // Antal dage i juni
-            val firstDayOffset = 5 // Første dag i juni er en lørdag, så offset er 5 (0 indekseret, så 0 er mandag og 6 er søndag)
+            val firstDayOffset =
+                5 // Første dag i juni er en lørdag, så offset er 5 (0 indekseret, så 0 er mandag og 6 er søndag)
             // Loop til visning af dage i måneden
             for (week in 0 until 6) {
                 Row(
@@ -138,7 +139,8 @@ fun Calendar(state: TaskState) {
                         if (date in 1..daysInMonth) {
                             // hasTask tjekker om der er tasks på den givne dato
                             val hasTask = state.task.any {
-                                val dayOfMonth = "\\d+".toRegex().find(it.date)?.value?.toIntOrNull()
+                                val dayOfMonth =
+                                    "\\d+".toRegex().find(it.date)?.value?.toIntOrNull()
                                 dayOfMonth == date
                             }
                             Box(

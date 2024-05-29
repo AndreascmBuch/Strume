@@ -9,11 +9,11 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 @Entity(tableName = "habits")
-data class Habit (
+data class Habit(
     val name: String,
     val frequency: Frequency,
     val streak: Int,
-    val lastUpdated: LocalDateTime?=null,
+    val lastUpdated: LocalDateTime? = null,
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0
 ) {
