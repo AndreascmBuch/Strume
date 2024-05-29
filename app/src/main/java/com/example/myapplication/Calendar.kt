@@ -28,8 +28,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Calendar(state: TaskState) {
-    // Variabel til at gemme den valgte dato
+    // Variabel til at gemme den brugervalgte dato i kalenderen
     var selectedDate by remember { mutableIntStateOf(-1) }
+
     // Liste over ugedage
     val weekdays = listOf("mon", "tue", "wed", "thu", "fri", "sat", "sun")
 
@@ -44,7 +45,7 @@ fun Calendar(state: TaskState) {
             .fillMaxSize()
             .background(color = Color(0xFF4E4853))
     ) {
-        // Baggrundsbillede
+        // Baggrund
         Image(
             painter = painterResource(id = R.drawable.homescreenshapes),
             contentDescription = "Shape",
@@ -53,7 +54,7 @@ fun Calendar(state: TaskState) {
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)
         )
-        // Kolonne til overskrifter og kalender
+        // Column til overskrifter og kalenderlayout
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
@@ -61,7 +62,7 @@ fun Calendar(state: TaskState) {
                 .fillMaxSize()
                 .padding(bottom = 48.dp)
         ) {
-            // Kolonne til overskrift
+            // Column til titel
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
@@ -82,7 +83,7 @@ fun Calendar(state: TaskState) {
                     modifier = Modifier.padding(bottom = 24.dp)
                 )
             }
-            // Kolonne til visning af måned og ugedage
+            // Column til visning af måned og ugedage
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
@@ -98,7 +99,7 @@ fun Calendar(state: TaskState) {
                         .align(Alignment.Start)
                         .padding(start = 22.dp, bottom = 8.dp)
                 )
-                // Række til visning af ugedage
+                // Row til visning af ugedage
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
@@ -124,7 +125,7 @@ fun Calendar(state: TaskState) {
 
             val daysInMonth = 30 // Antal dage i juni
             val firstDayOffset = 5 // Første dag i juni er en lørdag, så offset er 5 (0 indekseret, så 0 er mandag og 6 er søndag)
-            // Løkke til visning af dage i måneden
+            // Loop til visning af dage i måneden
             for (week in 0 until 6) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -135,7 +136,7 @@ fun Calendar(state: TaskState) {
                     for (day in 0 until 7) {
                         val date = week * 7 + day - firstDayOffset + 1
                         if (date in 1..daysInMonth) {
-                            // Tjek om der er opgaver på den givne dato
+                            // hasTask tjekker om der er tasks på den givne dato
                             val hasTask = state.task.any {
                                 val dayOfMonth = "\\d+".toRegex().find(it.date)?.value?.toIntOrNull()
                                 dayOfMonth == date
@@ -147,12 +148,15 @@ fun Calendar(state: TaskState) {
                                     .weight(1f)
                                     .size(48.dp)
                                     .clip(CircleShape)
+                                    // Gør så brugervalgt dato bliver highlighted
                                     .background(if (selectedDate == date) Color(0x5E3B77F0) else Color.Transparent)
                                     .border(
                                         width = 2.dp,
+                                        // Giver datoer med tasks en blå border
                                         color = if (hasTask) Color(0xFF3B77F0) else Color.Transparent,
                                         shape = CircleShape
                                     )
+                                    // Gør datoer clickable, aktiverer bottom sheet på click
                                     .clickable {
                                         selectedDate = date
                                         scope.launch { sheetState.show() }
@@ -177,7 +181,7 @@ fun Calendar(state: TaskState) {
                 }
             }
         }
-        // Funktionalitet for bottom sheet
+        // Bottom sheet funktionalitet
         if (showBottomSheet) {
             val tasksForSelectedDate = state.task.filter {
                 val dayOfMonth = "\\d+".toRegex().find(it.date)?.value?.toIntOrNull()
