@@ -49,7 +49,6 @@ import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-
 @Composable
 fun AddHabitDialog(
     state: HabitState,
@@ -58,16 +57,19 @@ fun AddHabitDialog(
     if (state.isAddingHabit) {
         AlertDialog(
             onDismissRequest = { onEvent(HabitEvent.HideDialog) },
+            // Titel til dialogen, ændres afhængig af om det er en ny vane eller redigering
             title = { Text(text = if (state.editingHabitId == null) "Add Habit" else "Edit Habit") },
             text = {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    // Tekstfelt til indtastning af vane navn
                     TextField(
                         value = state.name,
                         onValueChange = { onEvent(HabitEvent.SetName(it)) },
                         placeholder = { Text(text = "Habit Name") }
                     )
+                    // Dropdown menu til valg af frekvens for vanen
                     DropDownMenu(
                         frequencies = listOf(Habit.Frequency.Daily, Habit.Frequency.SecondDay, Habit.Frequency.Weekly),
                         selectedFrequency = state.frequency,
@@ -80,12 +82,14 @@ fun AddHabitDialog(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.padding(all = 8.dp)
                 ) {
+                    // Knap til at annullere og lukke dialogen
                     Button(
                         onClick = { onEvent(HabitEvent.HideDialog) },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xE63B77F0))
                     ) {
                         Text(text = "Cancel")
                     }
+                    // Knap til at gemme eller opdatere vanen
                     Button(
                         onClick = {
                             val habit = Habit(
@@ -113,6 +117,7 @@ fun HabitsScreen(viewModel: HabitViewModel) {
     Box(modifier = Modifier
         .fillMaxSize()
         .background(color = Color(0xFF4E4853))) {
+        // Baggrundsbillede
         Image(
             painter = painterResource(id = R.drawable.homescreenshapes),
             contentDescription = "Shape",
@@ -128,7 +133,7 @@ fun HabitsScreen(viewModel: HabitViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-
+            // Titel og beskrivelsestekst
             Text(
                 text = "Habits",
                 color = Color.White,
@@ -144,6 +149,7 @@ fun HabitsScreen(viewModel: HabitViewModel) {
 
             Spacer(modifier = Modifier.height(150.dp))
 
+            // Liste af vaner, som vises i en LazyColumn
             LazyColumn(contentPadding = PaddingValues(vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(items = state.habits) { habit ->
                     HabitItemRow(habit, viewModel)
@@ -168,11 +174,13 @@ fun HabitItemRow(habit: Habit, viewModel: HabitViewModel) {
             .fillMaxWidth()
             .clickable {
                 if (habit.streak == 0) {
+                    // Hvis streak er 0, starter vi streaken og viser en toast besked
                     viewModel.onEventForHabit(HabitEvent.IncrementStreak(habit))
                     Toast
                         .makeText(context, "Habit started! Keep it up!", Toast.LENGTH_SHORT)
                         .show()
                 } else {
+                    // Tjekker om vi kan øge streak baseret på vane frekvens
                     val now = LocalDateTime.now()
                     val lastUpdated = habit.lastUpdated ?: now.minusDays(1)
                     val canIncrement = when (habit.frequency) {
@@ -205,7 +213,9 @@ fun HabitItemRow(habit: Habit, viewModel: HabitViewModel) {
                 .padding(horizontal = 8.dp)
         ) {
             Column(modifier = Modifier.weight(1f)) {
+                // Visning af vane navn
                 Text(text = habit.name, fontSize = 20.sp, color = Color.White, modifier = Modifier.padding(start = 8.dp))
+                // Dropdown menu til valg af frekvens
                 DropDownMenu(
                     frequencies = listOf(Habit.Frequency.Daily, Habit.Frequency.SecondDay, Habit.Frequency.Weekly),
                     selectedFrequency = habit.frequency,
@@ -214,6 +224,7 @@ fun HabitItemRow(habit: Habit, viewModel: HabitViewModel) {
                     }
                 )
             }
+            // Visning af streak og ikoner til hjerte og sletning
             Text(text = "Streak: ${habit.streak}", color = Color.White, modifier = Modifier.padding(end = 8.dp))
             Icon(Icons.Default.Favorite, contentDescription = "Heartbeat", tint = Color.Red)
             IconButton(onClick = { viewModel.onEventForHabit(HabitEvent.DeleteHabit(habit)) }) {
@@ -232,6 +243,7 @@ fun DropDownMenu(
     var expanded by remember { mutableStateOf(false) }
 
     Box {
+        // Tekst, der viser den valgte frekvens og kan klikkes for at vise menuen
         Text(
             text = "Frequency: ${selectedFrequency.displayName}",
             modifier = Modifier
@@ -239,6 +251,7 @@ fun DropDownMenu(
                 .padding(8.dp),
             color = Color.White
         )
+        // Dropdown menu til at vælge en frekvens
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
@@ -247,7 +260,7 @@ fun DropDownMenu(
                 DropdownMenuItem(
                     onClick = {
                         onFrequencySelected(frequency)
-                        expanded = false // Close the dropdown after selection
+                        expanded = false // Luk menuen efter valg
                     },
                     text = { Text(text = "Frequency: ${frequency.displayName}")}
                 )

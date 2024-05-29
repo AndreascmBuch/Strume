@@ -47,14 +47,17 @@ import com.example.myapplication.welcomescreen.Welcome
 
 @OptIn(UnstableApi::class)
 @Composable
-fun Navigation(homeState: TaskState, onEventForTask: (TaskEvent) -> Unit, habitState:HabitState, onEventForHabit: (HabitEvent) -> Unit) {
+fun Navigation(homeState: TaskState, onEventForTask: (TaskEvent) -> Unit, habitState: HabitState, onEventForHabit: (HabitEvent) -> Unit) {
+    // Opretter en NavController til at styre navigationen
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
+    // Initialiserer ViewModels til vaner og hjem
     val habitsViewModel: HabitViewModel = viewModel()
     val homeViewModel: HomeViewmodel = viewModel()
 
+    // Scaffold med en bundnavigation
     Scaffold(
         bottomBar = {
             if (currentDestination?.route != "Welcome") {
@@ -67,6 +70,7 @@ fun Navigation(homeState: TaskState, onEventForTask: (TaskEvent) -> Unit, habitS
                             modifier = Modifier.background(Color.Black),
                             selected = currentDestination?.hierarchy?.any { it.route == navItem.route } == true,
                             onClick = {
+                                // Naviger til den valgte rute
                                 navController.navigate(navItem.route) {
                                     popUpTo(navController.graph.findStartDestination().id) {
                                         saveState = true
@@ -74,14 +78,12 @@ fun Navigation(homeState: TaskState, onEventForTask: (TaskEvent) -> Unit, habitS
                                     launchSingleTop = true
                                     restoreState = true
                                 }
-
                             },
                             icon = {
                                 Icon(
                                     imageVector = navItem.icon,
                                     contentDescription = null,
                                     tint = Color(0xFF383838)
-
                                 )
                             },
                             label = {
@@ -89,16 +91,14 @@ fun Navigation(homeState: TaskState, onEventForTask: (TaskEvent) -> Unit, habitS
                                     text = navItem.title,
                                     color = Color.White
                                 )
-
                             }
-
                         )
-
                     }
                 }
             }
         },
     ) { paddingValues ->
+        // NavHost til at definere navigationens ruter
         NavHost(
             navController = navController,
             startDestination = "Welcome",
@@ -128,7 +128,7 @@ fun Navigation(homeState: TaskState, onEventForTask: (TaskEvent) -> Unit, habitS
             .padding(bottom = 50.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
-
+        // Bestemmer hvilket ikon der skal vises på FAB baseret på den aktuelle rute
         val fabIcon = when (currentDestination?.route) {
             Screens.HomeScreen.name -> Icons.Default.Add
             Screens.CalendarScreen.name -> Icons.Default.Add
@@ -137,9 +137,10 @@ fun Navigation(homeState: TaskState, onEventForTask: (TaskEvent) -> Unit, habitS
             else -> null
         }
         if (fabIcon != null) {
+            // FloatingActionButton til at udføre handlinger baseret på den aktuelle rute
             FloatingActionButton(
                 onClick = {
-                    // Perform action based on the current destination
+                    // Udfører handling baseret på den aktuelle destination
                     when (currentDestination?.route) {
                         Screens.HomeScreen.name -> {
                             Log.d("Navigation", "ViewModel instance from FAB:")
@@ -147,7 +148,7 @@ fun Navigation(homeState: TaskState, onEventForTask: (TaskEvent) -> Unit, habitS
                         }
 
                         Screens.CalendarScreen.name -> {
-                            // Action for Calendar screen
+                            // Handling for Kalender skærm
                         }
 
                         Screens.HabitsScreen.name -> {
@@ -156,7 +157,7 @@ fun Navigation(homeState: TaskState, onEventForTask: (TaskEvent) -> Unit, habitS
                         }
 
                         Screens.ListScreen.name -> {
-                            // Action for List screen
+                            // Handling for List skærm
                         }
                     }
                 },
